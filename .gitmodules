@@ -1,0 +1,3 @@
+[submodule "third-party/vkmGL"]
+	path = third-party/vkmGL
+	url = https://github.com/V-KMilev/vkmGL.git
