@@ -2,10 +2,6 @@
 
 #include <iostream>
 
-ActionHandle::ActionHandle() {}
-
-ActionHandle::~ActionHandle() {}
-
 bool ActionHandle::set_type(const std::string &head) {
 
 	if(head[0] != 'D' || head[0] != 'S' || head[0] != 'A' || head[0] != 'F') {

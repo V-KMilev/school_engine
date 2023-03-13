@@ -4,6 +4,8 @@
 
 #include "function_handle.h"
 
+#include "hash_map.h"
+
 enum class FunctionType {
 	NONE   = 0,
 	DEFINE = 1,
@@ -14,9 +16,9 @@ enum class FunctionType {
 
 class ActionHandle {
 	public:
-		ActionHandle();
+		ActionHandle() = default;
 
-		~ActionHandle();
+		~ActionHandle() = default;
 
 		bool set_type(const std::string &head);
 
@@ -26,5 +28,5 @@ class ActionHandle {
 		std::string m_head;
 		FunctionType m_type;
 
-		FunctionHandle* m_functions;
+		HashMap<FunctionHandle*> m_cached_funcs;
 };

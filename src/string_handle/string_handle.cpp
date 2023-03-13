@@ -2,15 +2,9 @@
 
 #include <iostream>
 
-StringHandle::StringHandle() {}
-
-StringHandle::~StringHandle() {
-	delete[] m_substrings.strings;
-}
-
 std::string* StringHandle::split(const std::string &content, char delimiter, int &count) {
 	// Deallocate any previous substrings
-	delete[] m_substrings.strings;
+	m_substrings.~StringArray();
 
 	// Init set count to 1
 	count = 1;

@@ -18,14 +18,7 @@ DefineHandle::DefineHandle(
 	std::string params = "";
 	params = sh.extract_string_between(m_name, '(', ')');
 
-	// TODO: Find a solution to this problem ;)
-	m_parameters.count = 3;
-
-	std::string* temp = sh.split(params, ',', m_parameters.count);
-
-	m_parameters.strings = new std::string[m_parameters.count];
-
-	m_parameters = temp;
+	m_cached_params = sh.split(params, ',', m_cached_params.count);
 }
 
 bool DefineHandle::set_body_tree() {

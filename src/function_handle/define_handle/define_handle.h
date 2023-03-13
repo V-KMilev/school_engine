@@ -10,8 +10,5 @@ class DefineHandle : public FunctionHandle {
 
 		bool set_body_tree() override;
 
-		void show_parameters();
-
-
 	private:
 };

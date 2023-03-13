@@ -5,13 +5,11 @@
 
 #include "define_handle.h"
 
+#include "hash_map.h"
+
 int main(int, char**) {
 
-	StringHandle sh;
-
 	DefineHandle dh("func1(a,b,c)", "DEFINE");
-
-	dh.show_parameters();
 
 	std::cout << "Hello, world!\n";
 }
