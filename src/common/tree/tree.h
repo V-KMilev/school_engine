@@ -1,4 +1,4 @@
-#pragma nonce
+#pragma once
 
 class Tree {
 	public:

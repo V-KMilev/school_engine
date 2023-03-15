@@ -20,13 +20,18 @@ class ActionHandle {
 
 		~ActionHandle() = default;
 
-		bool set_type(const std::string &head);
-
-		bool add_handle();
+		bool input_handle(const std::string &content);
 
 	private:
-		std::string m_head;
+		bool set_type(const std::string &tpye);
+
+		bool set_name(const std::string &name);
+
+		bool add_function(const std::string &params, const std::string &body);
+
+	private:
 		FunctionType m_type;
+		std::string m_name;
 
 		HashMap<FunctionHandle*> m_cached_funcs;
 };
