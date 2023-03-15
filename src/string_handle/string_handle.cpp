@@ -86,7 +86,7 @@ std::string* StringHandle::splitLim(const std::string &content, char delimiter, 
 
 	for (int idx = 0; idx < content.size(); idx++) {
 
-		char c = content[0];
+		char c = content[idx];
 
 		if (c == delimiter && idx <= to_index) {
 			m_substrings.strings[count++] = current_substring;
@@ -112,15 +112,31 @@ std::string StringHandle::extract_string_between(const std::string& content, con
 
 		if(content[idx] == start) {
 
-			while(content[idx+1] != end && idx+1 != content.size()) {
+			while(content[++idx] != end && idx <= content.size()) {
 
-				return_sunstring += content[++idx];
+				return_sunstring += content[idx];
 			}
+
+			break;
 		}
 	}
 
 	return return_sunstring;
 }
+
+std::string StringHandle::remove_symbol(const std::string &content, const char symbol) {
+	std::string result;
+
+	for (char c : content) {
+
+		if (c != symbol) {
+			result += c;
+		}
+	}
+
+	return result;
+}
+
 
 bool StringHandle::contains(const std::string &content, const char to_find) {
 	for(char c : content) {
