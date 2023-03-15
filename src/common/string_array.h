@@ -11,7 +11,7 @@ struct StringArray {
 			count = 0;
 		}
 
-		StringArray& operator = (const std::string* str) {
+		StringArray& operator = (const std::string* content) {
 			// Deallocate any previous strings
 			delete[] strings;
 
@@ -20,7 +20,7 @@ struct StringArray {
 
 			for(int idx = 0; idx < count; idx++) {
 
-				strings[idx] = str[idx];
+				strings[idx] = content[idx];
 			}
 
 			return *this;

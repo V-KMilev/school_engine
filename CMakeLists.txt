@@ -7,6 +7,7 @@ set(VKMGL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third-party/vkmGL)
 add_subdirectory(${VKMGL_DIR})
 
 set(SOURCES
+	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle/function_handle.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle/action_handle/action_handle.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle/define_handle/define_handle.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/string_handle/string_handle.cpp
@@ -14,6 +15,7 @@ set(SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/string_handle/string_handle.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/tree/tree.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/post.cpp
 
 	main.cpp
 )
