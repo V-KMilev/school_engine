@@ -3,39 +3,41 @@
 #include <iostream>
 
 #include "string_handle.h"
+#include "post.h"
 
-bool ActionHandle::input_handle(const std::string &content) {
+bool ActionHandle::handle_input(const std::string &content) {
 	StringHandle sh;
 
 	StringArray tpye;
+
 	std::string params;
 	std::string name;
 	std::string body;
 
 	tpye = sh.splitLim(content, ' ', 7, tpye.count);
 
+	if(!handle_type(tpye.strings[0])) {
+		return false;
+	}
+
 	name   = sh.extract_string_between(content, ' ', '(');
 	params = sh.extract_string_between(content, '(', ')');
 	body   = sh.extract_string_between(content, '"', '"');
 
-	if(!set_type(tpye.strings[0])) {
+	if(!handle_name(name)) {
 		return false;
 	}
 
-	if(!set_name(name)) {
-		return false;
-	}
-
-	if(!add_function(params, body)) {
+	if(!add_function(name, params, body)) {
 		return false;
 	}
 
 	return true;
 }
 
-bool ActionHandle::set_type(const std::string &type) {
+bool ActionHandle::handle_type(const std::string &type) {
 
-	if(type[0] != 'D' || type[0] != 'S' || type[0] != 'A' || type[0] != 'F') {
+	if(type[0] != 'D' && type[0] != 'S' && type[0] != 'A' && type[0] != 'F') {
 		std::cerr << "[ERROR] Unknow function set!\n";
 
 		return false;
@@ -64,22 +66,16 @@ bool ActionHandle::set_type(const std::string &type) {
 	return true;
 }
 
-bool ActionHandle::set_name(const std::string &name) {
+bool ActionHandle::handle_name(const std::string &name) {
 	StringHandle sh;
 
-	if((name[0] >= '!' && name[0] <= '@') || (name[0] >= '[' && name[0] <= '~')) {
+	if((name[0] >= '!' && name[0] <= '@') ||
+		(name[0] >= '[' && name[0] <= '`') ||
+		(name[0] >= '{' && name[0] <= '~')
+	) {
 		std::cerr << "[ERROR] Invaid function name set!\n";
 
 		return false;
-	}
-
-	std::string invalid_symbols = "";
-
-	for(char invalid = '!'; invalid <= '@'; invalid++) {
-		invalid_symbols += invalid;
-	}
-	for(char invalid = '['; invalid <= '~'; invalid++) {
-		invalid_symbols += invalid;
 	}
 
 	if(sh.contains(name, invalid_symbols)) {
@@ -91,8 +87,19 @@ bool ActionHandle::set_name(const std::string &name) {
 	return true;
 }
 
-bool ActionHandle::add_function(const std::string &params, const std::string &body) {
+bool ActionHandle::add_function(const std::string &name, const std::string &params, const std::string &body) {
 
+	DefineHandle newFunc(name);
+
+	if(!newFunc.handle_params(params)) {
+		return false;
+	}
+
+	if(!newFunc.handle_body(body)) {
+		return false;
+	}
+
+	m_cached_funcs.insert(name, newFunc);
 
 	return true;
 }

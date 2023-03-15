@@ -4,6 +4,8 @@
 
 #include "function_handle.h"
 
+#include "define_handle.h"
+
 #include "hash_map.h"
 
 enum class FunctionType {
@@ -20,18 +22,17 @@ class ActionHandle {
 
 		~ActionHandle() = default;
 
-		bool input_handle(const std::string &content);
+		bool handle_input(const std::string &content);
 
 	private:
-		bool set_type(const std::string &tpye);
+		bool handle_type(const std::string &tpye);
 
-		bool set_name(const std::string &name);
+		bool handle_name(const std::string &name);
 
-		bool add_function(const std::string &params, const std::string &body);
+		bool add_function(const std::string &name, const std::string &params, const std::string &body);
 
 	private:
 		FunctionType m_type;
-		std::string m_name;
 
-		HashMap<FunctionHandle*> m_cached_funcs;
+		HashMap<DefineHandle> m_cached_funcs;
 };

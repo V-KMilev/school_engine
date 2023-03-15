@@ -1,26 +1,51 @@
 #include "define_handle.h"
 
 #include <iostream>
-#include <string.h>
+#include <string>
 
 #include "string_handle.h"
 
+DefineHandle::DefineHandle(const std::string &name) : FunctionHandle(name) {}
 
-DefineHandle::DefineHandle(
-	const std::string &name,
-	const std::string &body
-)
- : FunctionHandle(name, body)
-{
-	// Set parameters
+bool DefineHandle::handle_params(const std::string &params) {
 	StringHandle sh;
 
-	std::string params = "";
-	params = sh.extract_string_between(m_name, '(', ')');
-
 	m_cached_params = sh.split(params, ',', m_cached_params.count);
+
+	for(int idx = 0; idx < m_cached_params.count; idx++) {
+
+		std::string& param = m_cached_params.strings[idx];
+
+		if((param[0] >= '!' && param[0] <= '@') ||
+			(param[0] >= '[' && param[0] <= '`') ||
+			(param[0] >= '{' && param[0] <= '~')
+		) {
+			std::cerr << "[ERROR] Invaid parameter(s) set!\n";
+
+			return false;
+		}
+
+		if(sh.contains(param, ' ')) {
+			param = sh.remove_symbol(param, ' ');
+		}
+
+		if(sh.contains(param, invalid_symbols)) {
+			std::cerr << "[ERROR] Invaid parameter(s) set!\n";
+
+			return false;
+		}
+	}
+
+	return true;
 }
 
-bool DefineHandle::set_body_tree() {
+bool DefineHandle::handle_body(const std::string &body) {
+
+	create_body_tree();
+
 	return true;
+}
+
+void DefineHandle::create_body_tree() {
+
 }
