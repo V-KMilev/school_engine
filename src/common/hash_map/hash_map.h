@@ -6,11 +6,10 @@
 
 template<typename T>
 struct Node {
-	std::string key;
-	T value;
-
-	// Next node ptr
-	Node* next;
+	public:
+		std::string key;
+		T value;
+		Node* next;
 };
 
 template<typename T>
@@ -20,9 +19,11 @@ class HashMap {
 
 		~HashMap();
 
-		void insert(const std::string& key, T value);
+		void insert(const std::string& key, T&& value);
 
-		T get(const std::string& key) const;
+		const T& get(const std::string& key) const;
+
+		int get_size() const;
 
 	private:
 		int hash(const std::string& key) const;
@@ -68,14 +69,14 @@ HashMap<T>::~HashMap() {
 		}
 	}
 
-	// Delete the array of pointers to nodes
+	// Delete the array
 	delete[] m_map;
 }
 
 template<typename T>
-void HashMap<T>::insert(const std::string& key, T value) {
+void HashMap<T>::insert(const std::string& key, T&& value) {
 	// Get index based on the hash value
-	int index = hash(key) % m_size;
+	int index = hash(key);
 
 	// Check if the key already exists
 	Node<T>* current = m_map[index];
@@ -85,14 +86,14 @@ void HashMap<T>::insert(const std::string& key, T value) {
 
 		if (current->key == key) {
 			// Set current's value to new value
-			current->value = value;
+			current->value = std::move(value);
 			return;
 		}
 		current = current->next;
 	}
 
 	// Create a new node and insert it into the hash map
-	Node<T>* new_node = new Node<T>{key, value, nullptr};
+	Node<T>* new_node = new Node<T>{key, std::move(value), nullptr};
 
 	// Set new_node to point to the last added node
 	new_node->next = m_map[index];
@@ -110,9 +111,9 @@ void HashMap<T>::insert(const std::string& key, T value) {
 }
 
 template<typename T>
-T HashMap<T>::get(const std::string& key) const {
+const T& HashMap<T>::get(const std::string& key) const {
 	// Get index based on the hash value
-	int index = hash(key) % m_size;
+	int index = hash(key);
 
 	// Search for the key in the linked list at the given index
 	Node<T>* current = m_map[index];
@@ -128,7 +129,13 @@ T HashMap<T>::get(const std::string& key) const {
 	}
 
 	// Return a default-constructed value if the key is not found
-	return T();
+	static T default_value;
+	return default_value;
+}
+
+template<typename T>
+int HashMap<T>::get_size() const {
+	return m_size;
 }
 
 template<typename T>
@@ -136,9 +143,8 @@ int HashMap<T>::hash(const std::string& key) const {
 	// "Polynomial rolling hash" algorithm
 	int hash_value = 0;
 
-	for (char c : key) {
-		// 37 becouse its my favorit number :)
-		hash_value += (hash_value * 37 + c) % m_size;
+	for (const char &c : key) {
+		hash_value = ((hash_value << 5) + c) % m_size;
 	}
 
 	return hash_value;
@@ -159,14 +165,17 @@ void HashMap<T>::resize(int new_size) {
 		new_map[i] = nullptr;
 	}
 
+	// Update the size
+	m_size = new_size;
+
 	// Rehash all existing key-value pairs into the new map
-	for (int i = 0; i < m_size; i++) {
+	for (int i = 0; i < m_size / 2; i++) {
 
 		Node<T>* node = m_map[i];
 
 		while(node != nullptr) {
 			// Compute the new index for the current node.
-			int index = hash(node->key) % new_size;
+			int index = hash(node->key);
 
 			// Insert the current node at the head of the corresponding list in the new array.
 			Node<T>* next = node->next;
@@ -174,6 +183,8 @@ void HashMap<T>::resize(int new_size) {
 			node->next = new_map[index];
 
 			new_map[index] = node;
+
+			node = next;
 		}
 	}
 
@@ -181,5 +192,4 @@ void HashMap<T>::resize(int new_size) {
 	delete[] m_map;
 
 	m_map = new_map;
-	m_size = new_size;
 }

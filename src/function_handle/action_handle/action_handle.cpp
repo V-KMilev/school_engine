@@ -14,9 +14,9 @@ bool ActionHandle::handle_input(const std::string &content) {
 	std::string name;
 	std::string body;
 
-	tpye = sh.splitLim(content, ' ', 7, tpye.count);
+	tpye = sh.split_limit(content, ' ', 7);
 
-	if(!handle_type(tpye.strings[0])) {
+	if(!handle_type(tpye.data()[0])) {
 		return false;
 	}
 
@@ -99,7 +99,7 @@ bool ActionHandle::add_function(const std::string &name, const std::string &para
 		return false;
 	}
 
-	m_cached_funcs.insert(name, newFunc);
+	m_cached_funcs.insert(name, std::move(newFunc));
 
 	return true;
 }

@@ -8,9 +8,9 @@ class StringHandle {
 
 		~StringHandle() = default;
 
-		std::string* split(const std::string &content, char delimiter, int &count);
+		std::string* split(const std::string &content, char delimiter);
 
-		std::string* splitLim(const std::string &content, char delimiter, int to_index, int &count);
+		std::string* split_limit(const std::string &content, char delimiter, int to_index);
 
 		std::string extract_string_between(const std::string& content, const char start, const char end);
 
