@@ -2,31 +2,37 @@
 
 #include <string>
 
-struct StringArray {
+class StringArray {
 	public:
-		StringArray() : strings(nullptr), count(0) {}
+		StringArray(int size);
+		StringArray();
 
-		~StringArray() {
-			delete[] strings;
-			count = 0;
-		}
+		~StringArray();
 
-		StringArray& operator = (const std::string* content) {
-			// Deallocate any previous strings
-			delete[] strings;
+		std::string& operator[](int index);
 
-			// Aallocate mem for the new copy
-			strings = new std::string[count];
+		StringArray& operator = (std::string* string_ptr);
 
-			for(int idx = 0; idx < count; idx++) {
+		void clear_data();
 
-				strings[idx] = content[idx];
-			}
+		void push_back(const std::string& str);
 
-			return *this;
-		}
+		const std::string* data() const;
 
-	public:
-		std::string* strings;
-		int count;
+		std::string* data();
+
+		int size() const;
+
+		int count() const;
+
+		int& count();
+
+	private:
+		void resize(int size);
+
+	private:
+		std::string* m_data;
+		// Default size: 10
+		int m_size;
+		int m_count;
 };
