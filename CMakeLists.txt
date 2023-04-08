@@ -14,8 +14,8 @@ set(SOURCES
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/string_handle/string_handle.cpp
 
-	${CMAKE_CURRENT_SOURCE_DIR}/src/common/tree/tree.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/post.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/string_array.cpp
 
 	main.cpp
 )

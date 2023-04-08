@@ -14,7 +14,7 @@ int main(int, char**) {
 
 	ActionHandle ah;
 
-	std::string inputTest = "DEFINE testFunc1(a, b, c, d): \"a & b | c\"";
+	std::string inputTest = "DEFINE testFunc1(a, b, c, d): \"a & !(b & d) | c\"";
 
 	ah.handle_input(inputTest);
 
