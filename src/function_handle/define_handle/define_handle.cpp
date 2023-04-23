@@ -61,7 +61,7 @@ bool DefineHandle::handle_params(const std::string &params) {
 bool DefineHandle::handle_body(const std::string &body) {
 
 	m_function.set_body(body);
-	m_function.create();
+	m_function.build();
 
 	m_function.print();
 
