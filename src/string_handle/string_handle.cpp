@@ -57,7 +57,7 @@ std::string* StringHandle::split_limit(const std::string &content, char delimite
 	}
 
 	// Count the number of substrings
-	for (int idx = 0; idx < to_index; idx++) {
+	for (int idx = 0; idx <= to_index; idx++) {
 		const char &c = content[idx];
 
 		if (c == delimiter) {
@@ -97,7 +97,7 @@ std::string* StringHandle::split_limit(const std::string &content, char delimite
 	return m_substrings.data();
 }
 
-std::string StringHandle::extract_string_between(const std::string& content, const char start, const char end) {
+std::string StringHandle::extract_string_between_cc(const std::string& content, const char start, const char end) {
 
 	std::string return_sunstring = "";
 
@@ -117,6 +117,33 @@ std::string StringHandle::extract_string_between(const std::string& content, con
 	return return_sunstring;
 }
 
+std::string StringHandle::extract_string_between_ii(const std::string& content, int start, int end) {
+
+	if(start == end || start > end) {
+		return content;
+	}
+
+	std::string return_sunstring = "";
+
+	for(int idx = start; idx < end; idx++) {
+		return_sunstring += content[idx];
+	}
+
+	return return_sunstring;
+}
+
+std::string StringHandle::extract_string_between_ic(const std::string& content, int start, const char end) {
+
+	std::string return_sunstring = "";
+
+	for(int idx = start; content[idx] != end; idx++) {
+
+		return_sunstring += content[idx];
+	}
+
+	return return_sunstring;
+}
+
 std::string StringHandle::remove_symbol(const std::string &content, const char symbol) {
 	std::string result;
 
@@ -130,6 +157,37 @@ std::string StringHandle::remove_symbol(const std::string &content, const char s
 	return result;
 }
 
+std::string StringHandle::remove_symbol(const std::string &content, const char symbol, int to_index) {
+	std::string result;
+
+	for (int idx = 0; idx <= to_index; idx++) {
+
+		const char &c = content[idx];
+
+		if (c != symbol) {
+			result += c;
+		}
+	}
+
+	return result;
+}
+
+std::string StringHandle::remove_all_between(const std::string& content, int start, int end) {
+
+	if(start == end || start > end) {
+		return content;
+	}
+
+	std::string return_sunstring = "";
+
+	for(int idx = 0; idx < content.size(); idx++) {
+		if(idx < start || idx > end) {
+			return_sunstring += content[idx];
+		}
+	}
+
+	return return_sunstring;
+}
 
 bool StringHandle::contains(const std::string &content, const char to_find) {
 	for(const char &c : content) {
@@ -153,4 +211,32 @@ bool StringHandle::contains(const std::string &content, const std::string &to_fi
 	}
 
 	return false;
+}
+
+int StringHandle::get_count(const std::string &content, const char to_find) {
+	int count = 0;
+
+	for(const char &c : content) {
+
+		if(c == to_find) {
+			count++;
+		}
+	}
+
+	return count;
+}
+
+int StringHandle::get_count(const std::string &content, const std::string &to_find) {
+	int count = 0;
+
+	for(const char &c : content) {
+		for(const char &c_find : to_find) {
+
+			if(c == c_find) {
+				count++;
+			}
+		}
+	}
+
+	return count;
 }
