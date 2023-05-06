@@ -1,7 +1,11 @@
 #pragma once
 
 #include "function_handle.h"
-#include "post.h"
+
+#include "hash_map.h"
+#include "pair.h"
+#include "logical_tree.h"
+
 
 class DefineHandle : public FunctionHandle {
 	public:
@@ -16,9 +20,9 @@ class DefineHandle : public FunctionHandle {
 
 		~DefineHandle() = default;
 
-		bool handle_params(const std::string &params) override;
+		bool handle_params(const std::string &params);
 
-		bool handle_body(const std::string &body) override;
+		bool handle_body(const std::string &body, const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions);
 
 	private:
 };
