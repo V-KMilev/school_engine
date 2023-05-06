@@ -14,7 +14,7 @@ class StringArray {
 
 		StringArray& operator = (std::string* string_ptr);
 
-		void clear_data();
+		void reset_data();
 
 		void push_back(const std::string& str);
 		void push_back(const char& c);

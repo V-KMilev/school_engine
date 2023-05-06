@@ -3,8 +3,8 @@
 #include <iostream>
 
 std::string* StringHandle::split(const std::string &content, char delimiter) {
-	// Deallocate any previous substrings
-	m_substrings.clear_data();
+	m_substrings.reset_data();
+
 	// Init set count to 1
 	int count = 1;
 
@@ -46,8 +46,7 @@ std::string* StringHandle::split(const std::string &content, char delimiter) {
 }
 
 std::string* StringHandle::split_limit(const std::string &content, char delimiter, int to_index) {
-	// Deallocate any previous substrings
-	m_substrings.clear_data();
+	m_substrings.reset_data();
 
 	// Init set count to 1
 	int count = 1;

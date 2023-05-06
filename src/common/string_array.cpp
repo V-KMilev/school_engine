@@ -27,9 +27,11 @@ StringArray::StringArray() : m_size(10), m_count(0) {
 
 
 StringArray::~StringArray() {
-	// TODO: ML fix!
 	if(m_data != nullptr) {
+
 		delete[] m_data;
+
+		m_data = nullptr;
 	}
 }
 
@@ -39,7 +41,12 @@ std::string& StringArray::operator[](int index) {
 
 StringArray& StringArray::operator = (std::string* string_ptr) {
 	// Deallocate any previous strings
-	delete[] m_data;
+	if (m_data != nullptr) {
+
+		delete[] m_data;
+
+		m_data = nullptr;
+	}
 
 	// Determine the new count
 	m_count = 0;
@@ -50,10 +57,8 @@ StringArray& StringArray::operator = (std::string* string_ptr) {
 
 	m_size = m_count * 2;
 
-	// Allocate mem for the new copy
 	m_data = new std::string[m_size];
 
-	// Copy the strings
 	for(int idx = 0; idx < m_count; idx++) {
 		m_data[idx] = string_ptr[idx];
 	}
@@ -61,7 +66,7 @@ StringArray& StringArray::operator = (std::string* string_ptr) {
 	return *this;
 }
 
-void StringArray::clear_data() {
+void StringArray::reset_data() {
 	for(int idx = 0; idx < m_size; idx++) {
 		m_data[idx] = "";
 	}
