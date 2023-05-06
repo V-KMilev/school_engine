@@ -14,9 +14,11 @@ int main(int, char**) {
 
 	ActionHandle ah;
 
-	std::string inputTest = "DEFINE testFunc1(a, b, c, d): \"a & !b | !c\"";
+	std::string inputTest1 = " DEFINE  testFunc1(a, b, c, d): \"a & (!b | !c)\"";
+	// std::string inputTest2 = " DEFINE  testFunc2(a, b, c, d): \"a & testFunc1(b,a,c,d)\"";
 
-	ah.handle_input(inputTest);
+	ah.handle_input(inputTest1);
+	// ah.handle_input(inputTest2);
 
-	std::cout << "Hello, world!\n";
+	std::cout << "\nHello, world!\n";
 }
