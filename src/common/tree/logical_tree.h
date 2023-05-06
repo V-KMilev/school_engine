@@ -20,11 +20,6 @@ struct TreeNode {
 		TreeNode(T value) :value(value), left(nullptr), right(nullptr) {}
 		TreeNode(T value, TreeNode<T>* left, TreeNode<T>* right) :value(value), left(left), right(right) {}
 
-		~TreeNode() {
-			delete left;
-			delete right;
-		}
-
 	public:
 		T value;
 
@@ -35,22 +30,13 @@ struct TreeNode {
 template<typename T>
 class LogicalTree {
 	public:
-		LogicalTree(const StringArray& body) : m_root(nullptr) {
-			m_body = body;
-		}
+		LogicalTree() : m_root(nullptr) {}
 
-		LogicalTree() : m_root(nullptr), m_body() {}
-
-		~LogicalTree() {
-			delete m_root;
-		}
-
-		void set_body(const StringArray& body) {
-			m_body = body;
-		}
-
-		void build(const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions) {
-			m_root = build_tree(functions);
+		void build(
+			const StringArray& body,
+			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions
+		) {
+			m_root = build_tree(body, functions);
 		}
 
 		void printTree(TreeNode<T>* node) {
@@ -70,18 +56,21 @@ class LogicalTree {
 
 	private:
 		// TODO: Finish function sets
-		TreeNode<T>* build_tree(const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions) {
+		TreeNode<T>* build_tree(
+			const StringArray& body,
+			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions
+		) {
 			Stack<TreeNode<T>*> stack;
 			Stack<TreeNode<T>*> braket_stack;
 
-			for (int idx = m_body.count(); idx >= 0; idx--) {
+			for (int idx = body.count(); idx >= 0; idx--) {
 
-				std::string str = m_body[idx];
+				const std::string& str = body.data()[idx];
 
 				if(str == ")") {
 
-					while(m_body[--idx] != "(") {
-						operator_set(braket_stack, m_body[idx]);
+					while(body.data()[--idx] != "(") {
+						operator_set(braket_stack, body.data()[idx]);
 					}
 
 					TreeNode<T>* right = braket_stack.pop();
@@ -125,6 +114,4 @@ class LogicalTree {
 
 	private:
 		TreeNode<T>* m_root;
-
-		StringArray m_body;
 };

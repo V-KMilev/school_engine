@@ -7,6 +7,8 @@
 #include "define_handle.h"
 
 #include "hash_map.h"
+#include "pair.h"
+#include "logical_tree.h"
 
 enum class FunctionType {
 	NONE   = 0,
@@ -36,5 +38,5 @@ class ActionHandle {
 	private:
 		FunctionType m_type;
 
-		HashMap<FunctionHandle> m_cached_funcs;
+		HashMap<Pair<std::string, LogicalTree<std::string>>> m_cached_funcs;
 };
