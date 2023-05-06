@@ -27,6 +27,7 @@ set(HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/string_handle
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/hash_map
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/pair
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/stack
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/tree
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common
