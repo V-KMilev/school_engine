@@ -1,8 +1,25 @@
 #include "string_array.h"
 
+StringArray::StringArray(std::string* string_ptr) : m_size(10), m_count(0) {
+	while (string_ptr[m_count] != "") {
+		m_count++;
+	}
+
+	m_size = m_count * 2;
+
+	// Allocate mem for the new copy
+	m_data = new std::string[m_size];
+
+	// Copy the strings
+	for(int idx = 0; idx < m_count; idx++) {
+		m_data[idx] = string_ptr[idx];
+	}
+}
+
 StringArray::StringArray(int size) : m_size(size), m_count(0) {
 	m_data = new std::string[size];
 }
+
 
 StringArray::StringArray() : m_size(10), m_count(0) {
 	m_data = new std::string[m_size];
@@ -11,7 +28,9 @@ StringArray::StringArray() : m_size(10), m_count(0) {
 
 StringArray::~StringArray() {
 	// TODO: ML fix!
-	delete[] m_data;
+	if(m_data != nullptr) {
+		delete[] m_data;
+	}
 }
 
 std::string& StringArray::operator[](int index) {
@@ -54,6 +73,14 @@ void StringArray::push_back(const std::string& str) {
 		resize(m_size * 2);
 	}
 	m_data[m_count++] = str;
+}
+
+void StringArray::push_back(const char& c) {
+	// Resize the array if it's more than 70% full
+	if (m_count + 1 > m_size * 0.7) {
+		resize(m_size * 2);
+	}
+	m_data[m_count++] = c;
 }
 
 const std::string* StringArray::data() const { return m_data; }

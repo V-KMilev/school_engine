@@ -4,6 +4,7 @@
 
 class StringArray {
 	public:
+		StringArray(std::string* string_ptr);
 		StringArray(int size);
 		StringArray();
 
@@ -16,6 +17,7 @@ class StringArray {
 		void clear_data();
 
 		void push_back(const std::string& str);
+		void push_back(const char& c);
 
 		const std::string* data() const;
 
