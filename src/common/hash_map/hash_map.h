@@ -5,11 +5,11 @@
 #include "error_handle.h"
 
 template<typename T>
-struct Node {
+struct HashNode {
 	public:
 		std::string key;
 		T value;
-		Node* next;
+		HashNode<T>* next;
 };
 
 template<typename T>
@@ -31,7 +31,7 @@ class HashMap {
 		void resize(int new_size);
 
 	private:
-		Node<T>** m_map;
+		HashNode<T>** m_map;
 
 		int m_element_count;
 		// Default size: 10
@@ -44,28 +44,24 @@ class HashMap {
 template<typename T>
 HashMap<T>::HashMap() : m_size(10), m_element_count(0) {
 
-	m_map = new Node<T>*[m_size];
+	m_map = new HashNode<T>*[m_size];
 
 	// Set all to nullptr
-	for (int i = 0; i < m_size; i++) {
-		m_map[i] = nullptr;
+	for (int idx = 0; idx < m_size; idx++) {
+		m_map[idx] = nullptr;
 	}
 }
 
 template<typename T>
 HashMap<T>::~HashMap() {
-	// Delete all nodes in the hash map
-	for (int i = 0; i < m_size; i++) {
+	for (int idx = 0; idx < m_size; idx++) {
 
-		Node<T>* node = m_map[i];
+		while(m_map[idx] != nullptr) {
 
-		while (node) {
-			// Get next node before deleting the current
-			Node<T>* next = node->next;
+			HashNode<T>* temp = m_map[idx];
+			m_map[idx] = m_map[idx]->next;
 
-			delete node;
-
-			node = next;
+			delete temp;
 		}
 	}
 
@@ -79,7 +75,7 @@ void HashMap<T>::insert(const std::string& key, T&& value) {
 	int index = hash(key);
 
 	// Check if the key already exists
-	Node<T>* current = m_map[index];
+	HashNode<T>* current = m_map[index];
 
 	// Continue until there are no more nodes
 	while (current != nullptr) {
@@ -92,13 +88,13 @@ void HashMap<T>::insert(const std::string& key, T&& value) {
 		current = current->next;
 	}
 
-	// Create a new node and insert it into the hash map
-	Node<T>* new_node = new Node<T>{key, std::move(value), nullptr};
+	// Create a new HashNode and insert it into the hash map
+	HashNode<T>* new_node = new HashNode<T>{key, std::move(value), nullptr};
 
-	// Set new_node to point to the last added node
+	// Set new_node to point to the last added HashNode
 	new_node->next = m_map[index];
 
-	// Set new_node as last added node
+	// Set new_node as last added HashNode
 	m_map[index] = new_node;
 
 	// Increse element count
@@ -116,7 +112,7 @@ const T& HashMap<T>::get(const std::string& key) const {
 	int index = hash(key);
 
 	// Search for the key in the linked list at the given index
-	Node<T>* current = m_map[index];
+	HashNode<T>* current = m_map[index];
 
 	while (current != nullptr) {
 
@@ -158,7 +154,7 @@ void HashMap<T>::resize(int new_size) {
 	}
 
 	// New map with the new size
-	Node<T>** new_map = new Node<T>*[new_size];
+	HashNode<T>** new_map = new HashNode<T>*[new_size];
 
 	// Set all to nullptr
 	for (int i = 0; i < new_size; i++) {
@@ -171,14 +167,14 @@ void HashMap<T>::resize(int new_size) {
 	// Rehash all existing key-value pairs into the new map
 	for (int i = 0; i < m_size / 2; i++) {
 
-		Node<T>* node = m_map[i];
+		HashNode<T>* node = m_map[i];
 
 		while(node != nullptr) {
-			// Compute the new index for the current node.
+			// Compute the new index for the current HashNode.
 			int index = hash(node->key);
 
-			// Insert the current node at the head of the corresponding list in the new array.
-			Node<T>* next = node->next;
+			// Insert the current HashNode at the head of the corresponding list in the new array.
+			HashNode<T>* next = node->next;
 
 			node->next = new_map[index];
 
