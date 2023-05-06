@@ -14,15 +14,19 @@ bool ActionHandle::handle_input(const std::string &content) {
 	std::string name;
 	std::string body;
 
-	tpye = sh.split_limit(content, ' ', 7);
+	std::string fixed_content = remove_white_spaces(content);
+
+	tpye = sh.split_limit(fixed_content, ' ', 6);
 
 	if(!handle_type(tpye.data()[0])) {
 		return false;
 	}
 
-	name   = sh.extract_string_between(content, ' ', '(');
-	params = sh.extract_string_between(content, '(', ')');
-	body   = sh.extract_string_between(content, '"', '"');
+	fixed_content = remove_white_spaces(tpye.data()[1]);
+
+	name   = sh.extract_string_between_ic(fixed_content, 0, '(');
+	params = sh.extract_string_between_cc(fixed_content, '(', ')');
+	body   = sh.extract_string_between_cc(fixed_content, '"', '"');
 
 	if(!handle_name(name)) {
 		return false;
@@ -95,11 +99,21 @@ bool ActionHandle::add_function(const std::string &name, const std::string &para
 		return false;
 	}
 
-	if(!newFunc.handle_body(body)) {
+	if(!newFunc.handle_body(body, m_cached_funcs)) {
 		return false;
 	}
 
 	m_cached_funcs.insert(name, std::move(newFunc));
 
 	return true;
+}
+
+std::string ActionHandle::remove_white_spaces(const std::string &content) {
+	StringHandle sh;
+
+	int idx = 0;
+
+	while(content[idx] == ' ') { idx++; }
+
+	return sh.extract_string_between_ii(content, idx, content.size());
 }

@@ -31,8 +31,10 @@ class ActionHandle {
 
 		bool add_function(const std::string &name, const std::string &params, const std::string &body);
 
+		std::string remove_white_spaces(const std::string &content);
+
 	private:
 		FunctionType m_type;
 
-		HashMap<DefineHandle> m_cached_funcs;
+		HashMap<FunctionHandle> m_cached_funcs;
 };
