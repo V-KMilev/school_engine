@@ -19,7 +19,7 @@ class HashMap {
 
 		~HashMap();
 
-		void insert(const std::string& key, T&& value);
+		void insert(const std::string& key, const T& value);
 
 		const T& get(const std::string& key) const;
 
@@ -70,7 +70,7 @@ HashMap<T>::~HashMap() {
 }
 
 template<typename T>
-void HashMap<T>::insert(const std::string& key, T&& value) {
+void HashMap<T>::insert(const std::string& key, const T& value) {
 	// Get index based on the hash value
 	int index = hash(key);
 
@@ -82,14 +82,14 @@ void HashMap<T>::insert(const std::string& key, T&& value) {
 
 		if (current->key == key) {
 			// Set current's value to new value
-			current->value = std::move(value);
+			current->value = value;
 			return;
 		}
 		current = current->next;
 	}
 
 	// Create a new HashNode and insert it into the hash map
-	HashNode<T>* new_node = new HashNode<T>{key, std::move(value), nullptr};
+	HashNode<T>* new_node = new HashNode<T>{key, value, nullptr};
 
 	// Set new_node to point to the last added HashNode
 	new_node->next = m_map[index];
