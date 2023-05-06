@@ -6,6 +6,14 @@
 
 #include "string_handle.h"
 
+#include "stack.h"
+
+#include "hash_map.h"
+#include "pair.h"
+#include "logical_tree.h"
+
+#include "function_handle.h"
+
 template<typename T>
 struct TreeNode {
 	public:
@@ -24,39 +32,36 @@ struct TreeNode {
 		TreeNode<T>* right;
 };
 
+template<typename T>
 class LogicalTree {
 	public:
-		LogicalTree(const std::string &body) : m_root(nullptr) {
-			StringHandle sh;
-			m_body = sh.remove_symbol(body, ' ');
+		LogicalTree(const StringArray& body) : m_root(nullptr) {
+			m_body = body;
 		}
 
-		LogicalTree() : m_root(nullptr), m_body("") {}
+		LogicalTree() : m_root(nullptr), m_body() {}
 
 		~LogicalTree() {
 			delete m_root;
 		}
 
-		void set_body(const std::string &body) {
-			StringHandle sh;
-			m_body = sh.remove_symbol(body, ' ');
+		void set_body(const StringArray& body) {
+			m_body = body;
 		}
 
-		void build() {
-			int index = 0;
-			m_root = build_tree(m_body, index);
+		void build(const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions) {
+			m_root = build_tree(functions);
 		}
 
-		void printTree(TreeNode<char>* node) {
+		void printTree(TreeNode<T>* node) {
 			if (node == nullptr) {
 				return;
 			}
 
-			printTree(node->left);
-
 			std::cout << " " << node->value;
 
 			printTree(node->right);
+			printTree(node->left);
 		}
 
 		void print() {
@@ -64,38 +69,62 @@ class LogicalTree {
 		}
 
 	private:
-		TreeNode<char>* build_tree(const std::string& equation, int index) {
-			const char& c = equation[index];
+		// TODO: Finish function sets
+		TreeNode<T>* build_tree(const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions) {
+			Stack<TreeNode<T>*> stack;
+			Stack<TreeNode<T>*> braket_stack;
 
-			TreeNode<char>* root = new TreeNode<char>(c);
+			for (int idx = m_body.count(); idx >= 0; idx--) {
 
-			if(root->value == '!') {
-				index++;
+				std::string str = m_body[idx];
 
-				TreeNode<char>* symbol = new TreeNode<char>(equation[index]);
-				root->left = symbol;
-			}
+				if(str == ")") {
 
-			index++;
+					while(m_body[--idx] != "(") {
+						operator_set(braket_stack, m_body[idx]);
+					}
 
-			if(index < equation.size()) {
-				const char& op = equation[index];
+					TreeNode<T>* right = braket_stack.pop();
+					TreeNode<T>* braket_root = braket_stack.pop();
+					braket_root->right = right;
 
-				if(op == '&' || op == '|') {
-					TreeNode<char>* node = new TreeNode<char>(op);
-
-					node->left = root;
-					node->right = build_tree(equation, index + 1);
-
-					return node;
+					stack.push(braket_root);
+				}
+				else {
+					operator_set(stack, str);
 				}
 			}
+
+			TreeNode<T>* right = stack.pop();
+			TreeNode<T>* root = stack.pop();
+			root->right = right;
 
 			return root;
 		}
 
-	private:
-		TreeNode<char>* m_root;
+		void operator_set(Stack<TreeNode<T>*> &stack, const std::string &param) {
+			if(param == "&" || param == "|") {
+				TreeNode<T>* node = new TreeNode<T>(param);
 
-		std::string m_body;
+				node->left  = stack.pop();
+				node->right = stack.pop();
+
+				stack.push(node);
+			}
+			else if (param == "!") {
+				TreeNode<T>* node = new TreeNode<T>(param);
+
+				node->left = stack.pop();
+
+				stack.push(node);
+			}
+			else {
+				stack.push(new TreeNode<T>(param));
+			}
+		}
+
+	private:
+		TreeNode<T>* m_root;
+
+		StringArray m_body;
 };
