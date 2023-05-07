@@ -12,10 +12,14 @@ class FunctionHandle {
 
 		const std::string& get_name() const;
 
+		const std::string& get_in_order() const;
+
 		const LogicalTree<std::string>& get_function_tree() const;
 
 	protected:
 		std::string m_name;
+
+		std::string m_in_order;
 
 		StringArray m_cached_params;
 

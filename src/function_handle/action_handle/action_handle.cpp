@@ -105,7 +105,10 @@ bool ActionHandle::add_function(const std::string &name, const std::string &para
 
 	m_cached_funcs.insert(
 		name,
-		newFunc.get_function_tree()
+		Pair<std::string, LogicalTree<std::string>>(
+			newFunc.get_in_order(),
+			newFunc.get_function_tree()
+		)
 	);
 
 	return true;
