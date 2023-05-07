@@ -10,6 +10,7 @@ set(SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle/function_handle.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle/action_handle/action_handle.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle/define_handle/define_handle.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle/solve_handle/solve_handle.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/string_handle/string_handle.cpp
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/string_handle/string_handle.cpp
@@ -24,6 +25,7 @@ set(HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle
 	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle/action_handle
 	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle/define_handle
+	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle/solve_handle
 	${CMAKE_CURRENT_SOURCE_DIR}/src/string_handle
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/hash_map
