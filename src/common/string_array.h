@@ -34,7 +34,7 @@ class StringArray {
 
 	private:
 		std::string* m_data;
-		// Default size: 10
+		// Default size: 11
 		int m_size;
 		int m_count;
 };

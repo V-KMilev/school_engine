@@ -1,6 +1,6 @@
 #include "string_array.h"
 
-StringArray::StringArray(std::string* string_ptr) : m_size(10), m_count(0) {
+StringArray::StringArray(std::string* string_ptr) : m_size(11), m_count(0) {
 	while (string_ptr[m_count] != "") {
 		m_count++;
 	}
@@ -20,11 +20,9 @@ StringArray::StringArray(int size) : m_size(size), m_count(0) {
 	m_data = new std::string[size];
 }
 
-
-StringArray::StringArray() : m_size(10), m_count(0) {
+StringArray::StringArray() : m_size(11), m_count(0) {
 	m_data = new std::string[m_size];
 }
-
 
 StringArray::~StringArray() {
 	if(m_data != nullptr) {
