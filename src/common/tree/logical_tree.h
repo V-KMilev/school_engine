@@ -32,14 +32,18 @@ class LogicalTree {
 	public:
 		LogicalTree() : m_root(nullptr) {}
 
+		TreeNode<T>* get_root() const {
+			return m_root;
+		}
+
 		void build(
 			const StringArray& body,
-			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions
+			const HashMap<LogicalTree<T>>& functions
 		) {
 			m_root = build_tree(body, functions);
 		}
 
-		void printTree(TreeNode<T>* node) {
+		void printTree(TreeNode<T>* node) const {
 			if (node == nullptr) {
 				return;
 			}
@@ -50,7 +54,7 @@ class LogicalTree {
 			printTree(node->left);
 		}
 
-		void print() {
+		void print() const {
 			printTree(m_root);
 		}
 
@@ -58,19 +62,19 @@ class LogicalTree {
 		// TODO: Finish function sets
 		TreeNode<T>* build_tree(
 			const StringArray& body,
-			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions
+			const HashMap<LogicalTree<T>>& functions
 		) {
 			Stack<TreeNode<T>*> stack;
 			Stack<TreeNode<T>*> braket_stack;
 
 			for (int idx = body.count(); idx >= 0; idx--) {
 
-				const std::string& str = body.data()[idx];
+				const std::string& data = body.data()[idx];
 
-				if(str == ")") {
+				if(data == ")") {
 
 					while(body.data()[--idx] != "(") {
-						operator_set(braket_stack, body.data()[idx]);
+						operator_set(braket_stack, body.data()[idx], functions);
 					}
 
 					TreeNode<T>* right = braket_stack.pop();
@@ -80,7 +84,7 @@ class LogicalTree {
 					stack.push(braket_root);
 				}
 				else {
-					operator_set(stack, str);
+					operator_set(stack, data, functions);
 				}
 			}
 
@@ -91,7 +95,11 @@ class LogicalTree {
 			return root;
 		}
 
-		void operator_set(Stack<TreeNode<T>*> &stack, const std::string &param) {
+		void operator_set(
+			Stack<TreeNode<T>*> &stack,
+			const std::string &param,
+			const HashMap<LogicalTree<T>>& functions
+		) {
 			if(param == "&" || param == "|") {
 				TreeNode<T>* node = new TreeNode<T>(param);
 
@@ -108,7 +116,16 @@ class LogicalTree {
 				stack.push(node);
 			}
 			else {
-				stack.push(new TreeNode<T>(param));
+				if(param.size() > 1) {
+					TreeNode<T>* func = functions.get(param).get_root();
+
+					if(func != nullptr) {
+						stack.push(func);
+					}
+				}
+				else {
+					stack.push(new TreeNode<T>(param));
+				}
 			}
 		}
 

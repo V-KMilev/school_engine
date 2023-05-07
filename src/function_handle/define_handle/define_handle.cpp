@@ -62,7 +62,7 @@ bool DefineHandle::handle_params(const std::string &params) {
 	return true;
 }
 
-bool DefineHandle::handle_body(const std::string &body, const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions) {
+bool DefineHandle::handle_body(const std::string &body, const HashMap<LogicalTree<std::string>>& functions) {
 	StringHandle sh;
 
 	std::string my_valid_symbols = invalid_symbols;
@@ -72,37 +72,79 @@ bool DefineHandle::handle_body(const std::string &body, const HashMap<Pair<std::
 	}
 
 	StringArray body_data = sh.split(body, ' ');
-	StringArray fixed_body_data;
+	StringArray clean_body_data(body_data.size());
 
-	for(int old_idx = 0; old_idx < body_data.count(); old_idx++) {
+	for(int first_idx = 0; first_idx < body_data.count(); first_idx++) {
 
-		if(body_data.data()[old_idx].size() == 1) {
-			fixed_body_data.push_back(body_data.data()[old_idx][0]);
+		const std::string& current_data = body_data.data()[first_idx];
+
+		std::string clean_data = "";
+
+		if(current_data.size() == 1) {
+
+			const char& c = current_data[0];
+			clean_body_data.push_back(c);
 
 			continue;
 		}
-		else if(
-			sh.contains(body_data.data()[old_idx], '!')      ||
-			sh.get_count(body_data.data()[old_idx], '(') > 1 ||
-			sh.get_count(body_data.data()[old_idx], ')') > 1
-		) {
 
-			int split_size = body_data.data()[old_idx].size();
+		clean_data = sh.remove_symbol(current_data, '!');
+		clean_data = sh.remove_symbol(clean_data,   '(');
+		clean_data = sh.remove_symbol(clean_data,   ')');
 
-			for(int new_idx = 0; new_idx < split_size; new_idx++) {
-				fixed_body_data.push_back(body_data.data()[old_idx][new_idx]);
+		if(clean_data.size() == 1) {
+			int split_size = current_data.size();
+
+			for(int second_idx = 0; second_idx < split_size; second_idx++) {
+
+				const char& c = current_data[second_idx];
+				clean_body_data.push_back(c);
+			}
+			continue;
+		}
+
+		if(!(
+			sh.get_count(current_data, '!') > 0 ||
+			sh.get_count(current_data, '(') > 1 ||
+			sh.get_count(current_data, ')') > 1 
+		)) {
+			std::string func_name = sh.extract_string_between_ic(clean_data, 0, ',');
+
+			func_name = sh.extract_string_between_ii(func_name, 0, func_name.size() - 1);
+
+			clean_body_data.push_back(func_name);
+			continue;
+		}
+
+		int split_size = current_data.size();
+
+		for(int second_idx = 0; second_idx < split_size; second_idx++) {
+
+			const char& c = current_data[second_idx];
+
+			if(c != clean_data[0]) {
+
+				clean_body_data.push_back(c);
+				continue;
 			}
 
-			continue;
+			std::string func_name = sh.extract_string_between_ii(current_data, second_idx, clean_data.size() + 2 + 1);
+
+			func_name = sh.remove_symbol(func_name, '(');
+			func_name = sh.remove_symbol(func_name, ')');
+
+			if(func_name == clean_data) {
+
+				func_name = sh.extract_string_between_ic(func_name, 0, ',');
+				func_name = sh.extract_string_between_ii(func_name, 0, func_name.size() - 1);
+
+				clean_body_data.push_back(func_name);
+				second_idx += clean_data.size() + 2 - 1;
+			}
 		}
-
-		std::string func_name = sh.extract_string_between_ic(body_data.data()[old_idx], 0, '(');
-		body_data.data()[old_idx] = func_name;
-
-		std::cerr << "\n" << functions.get(func_name).first << "\n";
 	}
 
-	m_function.build(fixed_body_data, functions);
+	m_function.build(clean_body_data, functions);
 
 	m_function.print();
 

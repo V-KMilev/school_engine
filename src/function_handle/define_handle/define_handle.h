@@ -22,7 +22,7 @@ class DefineHandle : public FunctionHandle {
 
 		bool handle_params(const std::string &params);
 
-		bool handle_body(const std::string &body, const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions);
+		bool handle_body(const std::string &body, const HashMap<LogicalTree<std::string>>& functions);
 
 	private:
 };
