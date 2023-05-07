@@ -10,10 +10,12 @@
 #include "logical_tree.h"
 
 DefineHandle::DefineHandle(const std::string &name) {
-	 m_name = name;
+	m_name = name;
+	m_in_order = "";
 }
 DefineHandle::DefineHandle() {
 	m_name = "";
+	m_in_order = "";
 }
 
 DefineHandle::DefineHandle(DefineHandle &&move) {
@@ -57,96 +59,220 @@ bool DefineHandle::handle_params(const std::string &params) {
 
 			return false;
 		}
+
+		m_in_order += param;
 	}
 
 	return true;
 }
 
-bool DefineHandle::handle_body(const std::string &body, const HashMap<LogicalTree<std::string>>& functions) {
+bool DefineHandle::handle_body(
+	const std::string &body,
+	const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions
+) {
 	StringHandle sh;
-
-	std::string my_valid_symbols = invalid_symbols;
-
-	for(int idx = 0; idx < m_cached_params.count(); idx++) {
-		my_valid_symbols = sh.remove_symbol(my_valid_symbols, m_cached_params.data()[idx][0]);
-	}
 
 	StringArray body_data = sh.split(body, ' ');
 	StringArray clean_body_data(body_data.size());
 
-	for(int first_idx = 0; first_idx < body_data.count(); first_idx++) {
+	HashMap<Pair<std::string, LogicalTree<std::string>>> fixed_functions;
 
-		const std::string& current_data = body_data.data()[first_idx];
+	for(int idx = 0; idx < body_data.count(); idx++) {
+
+		const std::string& current_data = body_data.data()[idx];
 
 		std::string clean_data = "";
 
-		if(current_data.size() == 1) {
-
-			const char& c = current_data[0];
-			clean_body_data.push_back(c);
-
+		if(single_param(sh, current_data, clean_data, clean_body_data)) {
 			continue;
 		}
 
-		clean_data = sh.remove_symbol(current_data, '!');
-		clean_data = sh.remove_symbol(clean_data,   '(');
-		clean_data = sh.remove_symbol(clean_data,   ')');
-
-		if(clean_data.size() == 1) {
-			int split_size = current_data.size();
-
-			for(int second_idx = 0; second_idx < split_size; second_idx++) {
-
-				const char& c = current_data[second_idx];
-				clean_body_data.push_back(c);
-			}
+		if(clean_func_param(sh, functions, current_data, clean_data, clean_body_data, fixed_functions)) {
 			continue;
 		}
 
-		if(!(
-			sh.get_count(current_data, '!') > 0 ||
-			sh.get_count(current_data, '(') > 1 ||
-			sh.get_count(current_data, ')') > 1 
-		)) {
-			std::string func_name = sh.extract_string_between_ic(clean_data, 0, ',');
-
-			func_name = sh.extract_string_between_ii(func_name, 0, func_name.size() - 1);
-
-			clean_body_data.push_back(func_name);
-			continue;
-		}
-
-		int split_size = current_data.size();
-
-		for(int second_idx = 0; second_idx < split_size; second_idx++) {
-
-			const char& c = current_data[second_idx];
-
-			if(c != clean_data[0]) {
-
-				clean_body_data.push_back(c);
-				continue;
-			}
-
-			std::string func_name = sh.extract_string_between_ii(current_data, second_idx, clean_data.size() + 2 + 1);
-
-			func_name = sh.remove_symbol(func_name, '(');
-			func_name = sh.remove_symbol(func_name, ')');
-
-			if(func_name == clean_data) {
-
-				func_name = sh.extract_string_between_ic(func_name, 0, ',');
-				func_name = sh.extract_string_between_ii(func_name, 0, func_name.size() - 1);
-
-				clean_body_data.push_back(func_name);
-				second_idx += clean_data.size() + 2 - 1;
-			}
+		if(!dirty_func_param(sh, functions, current_data, clean_data, clean_body_data, fixed_functions)) {
+			std::cerr << "[Function ERROR] > Unexpected error\n";
+			return false;
 		}
 	}
 
-	m_function.build(clean_body_data, functions);
+	m_function.build(clean_body_data, fixed_functions);
 
 	m_function.print();
 
 	return true;
+}
+
+bool DefineHandle::single_param(
+	const StringHandle& sh,
+	const std::string& current_data,
+	std::string& clean_data,
+	StringArray& clean_body_data
+) {
+	if(current_data.size() == 1) {
+
+		const char& c = current_data[0];
+		clean_body_data.push_back(c);
+
+		return true;
+	}
+
+	clean_data = sh.remove_symbol(current_data, '!');
+	clean_data = sh.remove_symbol(clean_data,   '(');
+	clean_data = sh.remove_symbol(clean_data,   ')');
+
+	if(clean_data.size() == 1) {
+		int split_size = current_data.size();
+
+		for(int idx = 0; idx < split_size; idx++) {
+
+			const char& c = current_data[idx];
+			clean_body_data.push_back(c);
+		}
+		return true;
+	}
+
+	return false;
+}
+
+bool DefineHandle::clean_func_param(
+	const StringHandle& sh,
+	const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
+	const std::string& current_data,
+	const std::string& clean_data,
+	StringArray& clean_body_data,
+	HashMap<Pair<std::string, LogicalTree<std::string>>>& fixed_functions
+) {
+	std::string current_in_order = "";
+
+	if(!(
+		sh.get_count(current_data, '!') > 0 ||
+		sh.get_count(current_data, '(') > 1 ||
+		sh.get_count(current_data, ')') > 1 
+	)) {
+
+		// Remove params without the first param
+		std::string func_name = sh.extract_string_between_ic(
+			clean_data,
+			0,
+			','
+		);
+
+		// Remove first param
+		func_name = sh.extract_string_between_ii(func_name, 0, func_name.size() - 1);
+
+		// Get all params
+		current_in_order = sh.extract_string_between_ii(clean_data, func_name.size(), clean_data.size());
+		current_in_order = sh.remove_symbol(current_in_order, ',');
+
+		const Pair<std::string, LogicalTree<std::string>>& pair = update_in_func(
+			functions,
+			func_name,
+			current_in_order
+		);
+		fixed_functions.insert(pair.first, pair);
+
+		clean_body_data.push_back(func_name);
+		return true;
+	}
+
+	return false;
+}
+
+bool DefineHandle::dirty_func_param(
+	const StringHandle& sh,
+	const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
+	const std::string& current_data,
+	const std::string& clean_data,
+	StringArray& clean_body_data,
+	HashMap<Pair<std::string, LogicalTree<std::string>>>& fixed_functions
+) {
+	std::string current_in_order = "";
+
+	int split_size = current_data.size();
+
+	for(int idx = 0; idx < split_size; idx++) {
+		const char& c = current_data[idx];
+
+		if(c != clean_data[0]) {
+			clean_body_data.push_back(c);
+			continue;
+		}
+
+		// Remove front content
+		std::string func_name = sh.extract_string_between_ii(
+			current_data,
+			idx,
+			clean_data.size() + 2 + 1
+		);
+
+		// Remove extra brackets
+		func_name = sh.remove_symbol(func_name, '(');
+		func_name = sh.remove_symbol(func_name, ')');
+
+		if(func_name == clean_data) {
+
+			// Remove params
+			func_name = sh.extract_string_between_ic(func_name, 0, ',');
+			func_name = sh.extract_string_between_ii(func_name, 0, func_name.size() - 1);
+
+			// Get all params
+			current_in_order = sh.extract_string_between_ii(clean_data, func_name.size(), clean_data.size());
+			current_in_order = sh.remove_symbol(current_in_order, ',');
+
+			const Pair<std::string, LogicalTree<std::string>>& pair = update_in_func(
+				functions,
+				func_name,
+				current_in_order
+			);
+			fixed_functions.insert(pair.first, pair);
+
+			clean_body_data.push_back(func_name);
+			idx += clean_data.size() + 2 - 1;
+		}
+	}
+
+	return true;
+}
+
+Pair<std::string, LogicalTree<std::string>> DefineHandle::update_in_func(
+	const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
+	const std::string& func_name,
+	const std::string& current_in_order
+) {
+
+	const std::string& func_in_order = functions.get(func_name).first;
+
+	if(func_in_order == "") {
+		std::cerr << "[Function ERROR] > Unexpected error\n";
+		return Pair<std::string, LogicalTree<std::string>>();
+	}
+
+	if(current_in_order == func_in_order) {
+		return Pair<std::string, LogicalTree<std::string>>(
+			func_name,
+			functions.get(func_name).second
+		);
+	}
+
+	const TreeNode<std::string>* origin_root = functions.get(func_name).second.get_root();
+
+	TreeNode<std::string>* root = origin_root->m_copy();
+	const TreeNode<std::string>* copy = root->m_copy();
+
+	for(int idx = 0; idx < current_in_order.size(); idx++) {
+
+		const char& new_c = current_in_order[idx];
+		const char& old_c = func_in_order[idx];
+
+		if(new_c != old_c) {
+			root->fix_data(copy, old_c, new_c);
+		}
+	}
+
+	return Pair<std::string, LogicalTree<std::string>>(
+		func_name,
+		LogicalTree<std::string>(root)
+	);
 }
