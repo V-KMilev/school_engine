@@ -21,6 +21,8 @@ class HashMap {
 
 		void insert(const std::string& key, const T& value);
 
+		void remove(const std::string& key);
+
 		const T& get(const std::string& key) const;
 
 		int get_size() const;
@@ -34,7 +36,7 @@ class HashMap {
 		HashNode<T>** m_map;
 
 		int m_element_count;
-		// Default size: 10
+		// Default size: 11
 		int m_size;
 };
 
@@ -42,7 +44,7 @@ class HashMap {
 	/* .cpp part */
 
 template<typename T>
-HashMap<T>::HashMap() : m_size(10), m_element_count(0) {
+HashMap<T>::HashMap() : m_size(11), m_element_count(0) {
 
 	m_map = new HashNode<T>*[m_size];
 
@@ -104,6 +106,43 @@ void HashMap<T>::insert(const std::string& key, const T& value) {
 	if (m_element_count > m_size * 0.7f) {
 		resize(2 * m_size);
 	}
+}
+
+template<typename T>
+void HashMap<T>::remove(const std::string& key) {
+	// Get the index based on the hash value
+	int index = hash(key);
+
+	// Search for the key in the linked list at the given index
+	HashNode<T>* current = m_map[index];
+	HashNode<T>* prev = nullptr;
+
+	while (current != nullptr) {
+		if (current->key == key) {
+			// Remove the node from the linked list
+			if (prev == nullptr) {
+				// Current node is the head of the linked list
+				m_map[index] = current->next;
+			} else {
+				// Current node is not the head of the linked list
+				prev->next = current->next;
+			}
+			
+			// Delete the removed node
+			delete current;
+			
+			// Decrease the element count
+			m_element_count--;
+			
+			return;
+		}
+		
+		prev = current;
+		current = current->next;
+	}
+
+	// Key not found in the hash map
+	return;
 }
 
 template<typename T>
