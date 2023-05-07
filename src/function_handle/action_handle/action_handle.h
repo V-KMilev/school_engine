@@ -38,5 +38,5 @@ class ActionHandle {
 	private:
 		FunctionType m_type;
 
-		HashMap<Pair<std::string, LogicalTree<std::string>>> m_cached_funcs;
+		HashMap<LogicalTree<std::string>> m_cached_funcs;
 };
