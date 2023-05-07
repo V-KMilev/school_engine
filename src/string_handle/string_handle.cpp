@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-std::string* StringHandle::split(const std::string &content, char delimiter) {
+std::string* StringHandle::split(const std::string &content, const char delimiter) {
 	m_substrings.reset_data();
 
 	// Init set count to 1
@@ -45,7 +45,7 @@ std::string* StringHandle::split(const std::string &content, char delimiter) {
 	return m_substrings.data();
 }
 
-std::string* StringHandle::split_limit(const std::string &content, char delimiter, int to_index) {
+std::string* StringHandle::split_limit(const std::string &content, const char delimiter, int to_index) {
 	m_substrings.reset_data();
 
 	// Init set count to 1
@@ -96,7 +96,7 @@ std::string* StringHandle::split_limit(const std::string &content, char delimite
 	return m_substrings.data();
 }
 
-std::string StringHandle::extract_string_between_cc(const std::string& content, const char start, const char end) {
+std::string StringHandle::extract_string_between_cc(const std::string& content, const char start, const char end) const {
 
 	std::string return_sunstring = "";
 
@@ -116,7 +116,7 @@ std::string StringHandle::extract_string_between_cc(const std::string& content, 
 	return return_sunstring;
 }
 
-std::string StringHandle::extract_string_between_ii(const std::string& content, int start, int end) {
+std::string StringHandle::extract_string_between_ii(const std::string& content, int start, int end) const {
 
 	if(start == end || start > end) {
 		return content;
@@ -131,7 +131,7 @@ std::string StringHandle::extract_string_between_ii(const std::string& content, 
 	return return_sunstring;
 }
 
-std::string StringHandle::extract_string_between_ic(const std::string& content, int start, const char end) {
+std::string StringHandle::extract_string_between_ic(const std::string& content, int start, const char end) const {
 
 	std::string return_sunstring = "";
 
@@ -143,7 +143,7 @@ std::string StringHandle::extract_string_between_ic(const std::string& content, 
 	return return_sunstring;
 }
 
-std::string StringHandle::remove_symbol(const std::string &content, const char symbol) {
+std::string StringHandle::remove_symbol(const std::string &content, const char symbol) const {
 	std::string result;
 
 	for (const char &c : content) {
@@ -156,7 +156,7 @@ std::string StringHandle::remove_symbol(const std::string &content, const char s
 	return result;
 }
 
-std::string StringHandle::remove_symbol(const std::string &content, const char symbol, int to_index) {
+std::string StringHandle::remove_symbol(const std::string &content, const char symbol, int to_index) const {
 	std::string result;
 
 	for (int idx = 0; idx <= to_index; idx++) {
@@ -171,7 +171,7 @@ std::string StringHandle::remove_symbol(const std::string &content, const char s
 	return result;
 }
 
-std::string StringHandle::remove_all_between(const std::string& content, int start, int end) {
+std::string StringHandle::remove_all_between(const std::string& content, int start, int end) const {
 
 	if(start == end || start > end) {
 		return content;
@@ -188,7 +188,7 @@ std::string StringHandle::remove_all_between(const std::string& content, int sta
 	return return_sunstring;
 }
 
-bool StringHandle::contains(const std::string &content, const char to_find) {
+bool StringHandle::contains(const std::string &content, const char to_find) const {
 	for(const char &c : content) {
 
 		if(c == to_find) {
@@ -199,7 +199,7 @@ bool StringHandle::contains(const std::string &content, const char to_find) {
 	return false;
 }
 
-bool StringHandle::contains(const std::string &content, const std::string &to_find) {
+bool StringHandle::contains(const std::string &content, const std::string &to_find) const {
 	for(const char &c : content) {
 		for(const char &c_find : to_find) {
 
@@ -212,7 +212,7 @@ bool StringHandle::contains(const std::string &content, const std::string &to_fi
 	return false;
 }
 
-int StringHandle::get_count(const std::string &content, const char to_find) {
+int StringHandle::get_count(const std::string &content, const char to_find) const {
 	int count = 0;
 
 	for(const char &c : content) {
@@ -225,7 +225,7 @@ int StringHandle::get_count(const std::string &content, const char to_find) {
 	return count;
 }
 
-int StringHandle::get_count(const std::string &content, const std::string &to_find) {
+int StringHandle::get_count(const std::string &content, const std::string &to_find) const {
 	int count = 0;
 
 	for(const char &c : content) {
