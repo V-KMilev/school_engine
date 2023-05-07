@@ -96,10 +96,7 @@ bool DefineHandle::handle_body(
 			return false;
 		}
 	}
-
 	m_function.build(clean_body_data, fixed_functions);
-
-	m_function.print();
 
 	return true;
 }
