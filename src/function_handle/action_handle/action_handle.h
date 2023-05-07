@@ -26,6 +26,8 @@ class ActionHandle {
 
 		bool handle_input(const std::string &content);
 
+		const LogicalTree<std::string>& get_logical_tree(const std::string& function) const;
+
 	private:
 		bool handle_type(const std::string &tpye);
 

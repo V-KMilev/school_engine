@@ -39,6 +39,10 @@ bool ActionHandle::handle_input(const std::string &content) {
 	return true;
 }
 
+const LogicalTree<std::string>& ActionHandle::get_logical_tree(const std::string& function) const {
+	return m_cached_funcs.get(function).second;
+}
+
 bool ActionHandle::handle_type(const std::string &type) {
 
 	if(type[0] != 'D' && type[0] != 'S' && type[0] != 'A' && type[0] != 'F') {
