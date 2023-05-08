@@ -11,22 +11,22 @@
 
 DefineHandle::DefineHandle(const std::string &name) {
 	m_name = name;
-	m_in_order = "";
+	m_params = "";
 }
 DefineHandle::DefineHandle() {
 	m_name = "";
-	m_in_order = "";
+	m_params = "";
 }
 
 DefineHandle::DefineHandle(DefineHandle &&move) {
 	m_name = move.m_name;
-	m_cached_params = std::move(move.m_cached_params);
+	m_params = move.m_params;
 	m_function = std::move(move.m_function);
 }
 
 DefineHandle& DefineHandle::operator = (DefineHandle &&move) noexcept {
 	m_name = move.m_name;
-	m_cached_params = std::move(move.m_cached_params);
+	m_params = move.m_params;
 	m_function = std::move(move.m_function);
 
 	return *this;
@@ -35,32 +35,15 @@ DefineHandle& DefineHandle::operator = (DefineHandle &&move) noexcept {
 bool DefineHandle::handle_params(const std::string &params) {
 	StringHandle sh;
 
-	m_cached_params = sh.split(params, ',');
+	m_params = params;
 
-	for(int idx = 0; idx < m_cached_params.count(); idx++) {
+	m_params = sh.remove_symbol(m_params, ' ');
+	m_params = sh.remove_symbol(m_params, ',');
 
-		std::string& param = m_cached_params.data()[idx];
+	if(sh.contains(m_params, invalid_symbols)) {
+		std::cerr << "[ERROR] Invaid parameter(s) set!\n";
 
-		if((param[0] >= '!' && param[0] <= '@')  ||
-			(param[0] >= '[' && param[0] <= '`') ||
-			(param[0] >= '{' && param[0] <= '~')
-		) {
-			std::cerr << "[ERROR] Invaid parameter(s) set!\n";
-
-			return false;
-		}
-
-		if(sh.contains(param, ' ')) {
-			param = sh.remove_symbol(param, ' ');
-		}
-
-		if(sh.contains(param, invalid_symbols)) {
-			std::cerr << "[ERROR] Invaid parameter(s) set!\n";
-
-			return false;
-		}
-
-		m_in_order += param;
+		return false;
 	}
 
 	return true;
@@ -92,13 +75,25 @@ bool DefineHandle::handle_body(
 		}
 
 		if(!dirty_func_param(sh, functions, current_data, clean_data, clean_body_data, fixed_functions)) {
-			std::cerr << "[Function ERROR] > Unexpected error\n";
+			std::cerr << "[dirty_func_param ERROR] > Unexpected error\n";
 			return false;
 		}
 	}
 	m_function.build(clean_body_data, fixed_functions);
 
 	return true;
+}
+
+const std::string& DefineHandle::get_name() const {
+	return m_name;
+}
+
+const std::string& DefineHandle::get_params() const {
+	return m_params;
+}
+
+const LogicalTree<std::string>& DefineHandle::get_function_tree() const {
+	return m_function;
 }
 
 bool DefineHandle::single_param(
@@ -127,6 +122,7 @@ bool DefineHandle::single_param(
 			const char& c = current_data[idx];
 			clean_body_data.push_back(c);
 		}
+
 		return true;
 	}
 
@@ -171,6 +167,7 @@ bool DefineHandle::clean_func_param(
 		fixed_functions.insert(pair.first, pair);
 
 		clean_body_data.push_back(func_name);
+
 		return true;
 	}
 
@@ -185,7 +182,7 @@ bool DefineHandle::dirty_func_param(
 	StringArray& clean_body_data,
 	HashMap<Pair<std::string, LogicalTree<std::string>>>& fixed_functions
 ) {
-	std::string current_in_order = "";
+	std::string current_params = "";
 
 	int split_size = current_data.size();
 
@@ -209,19 +206,18 @@ bool DefineHandle::dirty_func_param(
 		func_name = sh.remove_symbol(func_name, ')');
 
 		if(func_name == clean_data) {
-
 			// Remove params
 			func_name = sh.extract_string_between_ic(func_name, 0, ',');
 			func_name = sh.extract_string_between_ii(func_name, 0, func_name.size() - 1);
 
 			// Get all params
-			current_in_order = sh.extract_string_between_ii(clean_data, func_name.size(), clean_data.size());
-			current_in_order = sh.remove_symbol(current_in_order, ',');
+			current_params = sh.extract_string_between_ii(clean_data, func_name.size(), clean_data.size());
+			current_params = sh.remove_symbol(current_params, ',');
 
 			const Pair<std::string, LogicalTree<std::string>>& pair = update_in_func(
 				functions,
 				func_name,
-				current_in_order
+				current_params
 			);
 			fixed_functions.insert(pair.first, pair);
 
@@ -236,17 +232,16 @@ bool DefineHandle::dirty_func_param(
 Pair<std::string, LogicalTree<std::string>> DefineHandle::update_in_func(
 	const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
 	const std::string& func_name,
-	const std::string& current_in_order
+	const std::string& current_params
 ) {
+	const std::string& func_params = functions.get(func_name).first;
 
-	const std::string& func_in_order = functions.get(func_name).first;
-
-	if(func_in_order == "") {
-		std::cerr << "[Function ERROR] > Unexpected error\n";
+	if(func_params == "") {
+		std::cerr << "[update_in_func ERROR] > Unexpected error\n";
 		return Pair<std::string, LogicalTree<std::string>>();
 	}
 
-	if(current_in_order == func_in_order) {
+	if(current_params == func_params) {
 		return Pair<std::string, LogicalTree<std::string>>(
 			func_name,
 			functions.get(func_name).second
@@ -258,10 +253,10 @@ Pair<std::string, LogicalTree<std::string>> DefineHandle::update_in_func(
 	TreeNode<std::string>* root = origin_root->m_copy();
 	const TreeNode<std::string>* copy = root->m_copy();
 
-	for(int idx = 0; idx < current_in_order.size(); idx++) {
+	for(int idx = 0; idx < current_params.size(); idx++) {
 
-		const char& new_c = current_in_order[idx];
-		const char& old_c = func_in_order[idx];
+		const char& new_c = current_params[idx];
+		const char& old_c = func_params[idx];
 
 		if(new_c != old_c) {
 			root->fix_data(copy, old_c, new_c);

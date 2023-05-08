@@ -1,13 +1,10 @@
 #pragma once
 
-#include "function_handle.h"
-
 #include "hash_map.h"
 #include "pair.h"
 #include "logical_tree.h"
 
-
-class DefineHandle : public FunctionHandle {
+class DefineHandle {
 	public:
 		DefineHandle(const std::string &name);
 		DefineHandle();
@@ -20,13 +17,20 @@ class DefineHandle : public FunctionHandle {
 
 		~DefineHandle() = default;
 
-		bool handle_params(const std::string &params);
-
 		bool handle_body(
 			const std::string &body,
 			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions
 		);
 
+		bool handle_params(const std::string &params);
+
+		const std::string& get_name() const;
+
+		const std::string& get_params() const;
+
+		const LogicalTree<std::string>& get_function_tree() const;
+
+	private:
 		bool single_param(
 			const StringHandle& sh,
 			const std::string& current_data,
@@ -55,8 +59,12 @@ class DefineHandle : public FunctionHandle {
 		Pair<std::string, LogicalTree<std::string>> update_in_func(
 			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
 			const std::string& func_name,
-			const std::string& current_in_order
+			const std::string& current_params
 		);
 
 	private:
+		std::string m_name;
+		std::string m_params;
+
+		LogicalTree<std::string> m_function;
 };
