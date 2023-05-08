@@ -5,10 +5,13 @@
 #include "string_handle.h"
 #include "post.h"
 
+#include "define_handle.h"
+#include "solve_handle.h"
+
 bool ActionHandle::handle_input(const std::string &content) {
 	StringHandle sh;
 
-	StringArray tpye;
+	StringArray type;
 
 	std::string params;
 	std::string name;
@@ -16,37 +19,76 @@ bool ActionHandle::handle_input(const std::string &content) {
 
 	std::string fixed_content = remove_white_spaces(content);
 
-	tpye = sh.split_limit(fixed_content, ' ', 6);
+	type = sh.split_limit(fixed_content, ' ', 6);
 
-	if(!handle_type(tpye.data()[0])) {
+	if(!handle_type(type.data()[0])) {
 		return false;
 	}
 
-	fixed_content = remove_white_spaces(tpye.data()[1]);
+	fixed_content = remove_white_spaces(type.data()[1]);
 
-	name   = sh.extract_string_between_ic(fixed_content, 0, '(');
+	name = sh.extract_string_between_ic(fixed_content, 0, '(');
 	params = sh.extract_string_between_cc(fixed_content, '(', ')');
-	body   = sh.extract_string_between_cc(fixed_content, '"', '"');
 
 	if(!handle_name(name)) {
 		return false;
 	}
 
-	if(!add_function(name, params, body)) {
-		return false;
+	if(m_type == FunctionType::SOLVE) {
+
+		SolveHandle newFunc(name);
+
+		newFunc.handle_params(params);
+
+		newFunc.solve(m_functions);
+
+		m_solves.insert(
+			name,
+			newFunc.get_solve()
+		);
+
+		return true;
 	}
 
-	return true;
+	body = sh.extract_string_between_cc(fixed_content, '"', '"');
+
+	if(m_type == FunctionType::DEFINE) {
+		DefineHandle newFunc(name);
+
+		if(!newFunc.handle_params(params)) {
+			return false;
+		}
+
+		if(!newFunc.handle_body(body, m_functions)) {
+			return false;
+		}
+
+		m_functions.insert(
+			name,
+			Pair<std::string, LogicalTree<std::string>>(
+				newFunc.get_params(),
+				newFunc.get_function_tree()
+			)
+		);
+
+		return true;
+	}
+
+	return false;
 }
 
 const LogicalTree<std::string>& ActionHandle::get_logical_tree(const std::string& function) const {
-	return m_cached_funcs.get(function).second;
+	return m_functions.get(function).second;
+}
+
+const bool& ActionHandle::get_solve(const std::string& function) const {
+	return m_solves.get(function);
 }
 
 bool ActionHandle::handle_type(const std::string &type) {
 
 	if(type[0] != 'D' && type[0] != 'S' && type[0] != 'A' && type[0] != 'F') {
-		std::cerr << "[ERROR] Unknow function set!\n";
+		std::cerr << "[handle_type ERROR] > Unknow function set!\n";
 
 		return false;
 	}
@@ -66,7 +108,7 @@ bool ActionHandle::handle_type(const std::string &type) {
 	else {
 		m_type = FunctionType::NONE;
 
-		std::cerr << "[ERROR] Unknow function set!\n";
+		std::cerr << "[handle_type ERROR] > Unknow function set!\n";
 
 		return false;
 	}
@@ -77,43 +119,11 @@ bool ActionHandle::handle_type(const std::string &type) {
 bool ActionHandle::handle_name(const std::string &name) {
 	StringHandle sh;
 
-	if((name[0] >= '!' && name[0] <= '@') ||
-		(name[0] >= '[' && name[0] <= '`') ||
-		(name[0] >= '{' && name[0] <= '~')
-	) {
-		std::cerr << "[ERROR] Invaid function name set!\n";
-
-		return false;
-	}
-
 	if(sh.contains(name, invalid_symbols)) {
 		std::cerr << "[ERROR] Invaid function name set!\n";
 
 		return false;
 	}
-
-	return true;
-}
-
-bool ActionHandle::add_function(const std::string &name, const std::string &params, const std::string &body) {
-
-	DefineHandle newFunc(name);
-
-	if(!newFunc.handle_params(params)) {
-		return false;
-	}
-
-	if(!newFunc.handle_body(body, m_cached_funcs)) {
-		return false;
-	}
-
-	m_cached_funcs.insert(
-		name,
-		Pair<std::string, LogicalTree<std::string>>(
-			newFunc.get_in_order(),
-			newFunc.get_function_tree()
-		)
-	);
 
 	return true;
 }

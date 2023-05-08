@@ -2,10 +2,6 @@
 
 #include <string>
 
-#include "function_handle.h"
-
-#include "define_handle.h"
-
 #include "hash_map.h"
 #include "pair.h"
 #include "logical_tree.h"
@@ -28,17 +24,18 @@ class ActionHandle {
 
 		const LogicalTree<std::string>& get_logical_tree(const std::string& function) const;
 
+		const bool& get_solve(const std::string& function) const;
+
 	private:
-		bool handle_type(const std::string &tpye);
+		bool handle_type(const std::string &type);
 
 		bool handle_name(const std::string &name);
-
-		bool add_function(const std::string &name, const std::string &params, const std::string &body);
 
 		std::string remove_white_spaces(const std::string &content);
 
 	private:
 		FunctionType m_type;
 
-		HashMap<Pair<std::string, LogicalTree<std::string>>> m_cached_funcs;
+		HashMap<Pair<std::string, LogicalTree<std::string>>> m_functions;
+		HashMap<bool> m_solves;
 };
