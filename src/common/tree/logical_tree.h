@@ -12,8 +12,6 @@
 #include "pair.h"
 #include "logical_tree.h"
 
-#include "function_handle.h"
-
 template<typename T>
 struct TreeNode {
 	public:
@@ -40,9 +38,9 @@ void TreeNode<T>::fix_data(const TreeNode<T>* origin, const char& old_c, const c
 	}
 
 	if(!(origin->value == "&" || origin->value == "|" || origin->value == "!")) {
-		if(origin->value == std::string(1, old_c)) {
+		if(origin->value[0] == old_c) {
 
-			value = std::string(1, new_c);
+			value[0] = new_c;
 			return;
 		}
 	}
@@ -68,10 +66,9 @@ void TreeNode<T>::print() const {
 		return;
 	}
 
-	right->print();
-
 	std::cerr << value << " ";
 
+	right->print();
 	left->print();
 
 	return;
@@ -90,6 +87,9 @@ class LogicalTree {
 			const StringArray& body,
 			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions
 		);
+		
+		bool solve(const std::string& values) const;
+
 
 		void print() const;
 
@@ -105,7 +105,7 @@ class LogicalTree {
 			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions
 		);
 
-		void printTree(TreeNode<T>* node) const;
+		bool evaluate(const TreeNode<T>* node, const std::string& values) const;
 
 	private:
 		TreeNode<T>* m_root;
@@ -128,6 +128,11 @@ void LogicalTree<T>::build(
 	const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions
 ) {
 	m_root = build_tree(body, functions);
+}
+
+template<typename T>
+bool LogicalTree<T>::solve(const std::string& values) const {
+	return evaluate(m_root, values);
 }
 
 template<typename T>
@@ -204,4 +209,30 @@ void LogicalTree<T>::operator_set(
 			stack.push(new TreeNode<T>(param));
 		}
 	}
+}
+
+template<typename T>
+bool LogicalTree<T>::evaluate(const TreeNode<T>* node, const std::string& values) const {
+	if(node->value == "&") {
+		return evaluate(node->left, values) && evaluate(node->right, values);
+	}
+	else if(node->value == "|") {
+		return evaluate(node->left, values) || evaluate(node->right, values);
+	}
+	else if(node->value == "!") {
+		return !evaluate(node->left, values);
+	}
+
+	for(int idx = 0; idx < values.size(); idx += 2) {
+		if(node->value[0] == values[idx]) {
+
+			if(values[idx + 1] == '1') {
+				return true;
+			}
+			return false;
+		}
+	}
+
+	std::cerr << "[evaluate ERROR] > Unexpected error\n";
+	exit(-1);
 }
