@@ -81,6 +81,10 @@ std::string* StringHandle::split_limit(const std::string &content, const char de
 		const char &c = content[idx];
 
 		if (c == delimiter && idx <= to_index) {
+			if(current_substring.size() == 0) {
+				continue;
+			}
+
 			m_substrings.push_back(current_substring);
 
 			current_substring = "";
