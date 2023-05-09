@@ -18,6 +18,10 @@ struct TreeNode {
 		TreeNode(T value) :value(value), left(nullptr), right(nullptr) {}
 		TreeNode(T value, TreeNode<T>* left, TreeNode<T>* right) :value(value), left(left), right(right) {}
 
+		bool operator == (const TreeNode& other) const {
+			return value == other.value && left == other.left && right == other.right;
+		}
+
 		void fix_data(const TreeNode<T>* origin, const char& c1, const char& c2);
 
 		TreeNode<T>* m_copy() const;
@@ -80,6 +84,10 @@ class LogicalTree {
 		LogicalTree();
 
 		LogicalTree(TreeNode<T>* root);
+
+		bool operator == (const LogicalTree& other) const {
+			return m_root == other.m_root;
+		}
 
 		TreeNode<T>* get_root() const;
 

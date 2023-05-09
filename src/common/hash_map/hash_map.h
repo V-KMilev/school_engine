@@ -27,6 +27,8 @@ class HashMap {
 
 		int get_size() const;
 
+		int get_count() const;
+
 	private:
 		int hash(const std::string& key) const;
 
@@ -35,7 +37,7 @@ class HashMap {
 	private:
 		HashNode<T>** m_map;
 
-		int m_element_count;
+		int m_count;
 		// Default size: 11
 		int m_size;
 };
@@ -44,7 +46,7 @@ class HashMap {
 	/* .cpp part */
 
 template<typename T>
-HashMap<T>::HashMap() : m_size(11), m_element_count(0) {
+HashMap<T>::HashMap() : m_size(11), m_count(0) {
 
 	m_map = new HashNode<T>*[m_size];
 
@@ -100,10 +102,10 @@ void HashMap<T>::insert(const std::string& key, const T& value) {
 	m_map[index] = new_node;
 
 	// Increse element count
-	m_element_count++;
+	m_count++;
 
 	// Resize the map if it's more than 70% full
-	if (m_element_count > m_size * 0.7f) {
+	if (m_count > m_size * 0.7f) {
 		resize(2 * m_size);
 	}
 }
@@ -132,7 +134,7 @@ void HashMap<T>::remove(const std::string& key) {
 			delete current;
 			
 			// Decrease the element count
-			m_element_count--;
+			m_count--;
 			
 			return;
 		}
@@ -171,6 +173,11 @@ const T& HashMap<T>::get(const std::string& key) const {
 template<typename T>
 int HashMap<T>::get_size() const {
 	return m_size;
+}
+
+template<typename T>
+int HashMap<T>::get_count() const {
+	return m_count;
 }
 
 template<typename T>
