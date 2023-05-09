@@ -263,9 +263,9 @@ Pair<std::string, LogicalTree<std::string>> DefineHandle::update_in_func(
 ) {
 	const std::string& func_params = functions.get(func_name).first;
 
-	if(func_params == "") {
-		std::cerr << "[update_in_func ERROR] > Unexpected error\n";
-		return Pair<std::string, LogicalTree<std::string>>();
+	if(current_params.size() < func_params.size() || current_params.size() > func_params.size()) {
+		std::cerr << "[update_in_func ERROR] > Invalid function parameter set!\n";
+		exit(-1);
 	}
 
 	if(current_params == func_params) {
@@ -284,6 +284,11 @@ Pair<std::string, LogicalTree<std::string>> DefineHandle::update_in_func(
 
 		const char& new_c = current_params[idx];
 		const char& old_c = func_params[idx];
+
+		if(!is_valid(functions, std::string(1, new_c))) {
+			std::cerr << "[update_in_func ERROR] > Invalid function parameter set!\n";
+			exit(-1);
+		}
 
 		if(new_c != old_c) {
 			root->fix_data(copy, old_c, new_c);

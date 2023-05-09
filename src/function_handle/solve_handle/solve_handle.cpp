@@ -39,7 +39,7 @@ bool SolveHandle::get_solve() const {
 }
 
 void SolveHandle::solve(const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions) {
-	const Pair<std::string, LogicalTree<std::string>>& func =  functions.get(m_name);
+	const Pair<std::string, LogicalTree<std::string>>& func = functions.get(m_name);
 
 	const std::string& func_params = func.first;
 
