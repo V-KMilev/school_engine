@@ -33,6 +33,7 @@ class DefineHandle {
 	private:
 		bool single_param(
 			const StringHandle& sh,
+			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
 			const std::string& current_data,
 			std::string& clean_data,
 			StringArray& clean_body_data
@@ -61,6 +62,11 @@ class DefineHandle {
 			const std::string& func_name,
 			const std::string& current_params
 		);
+		
+		bool is_valid(
+			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
+			const std::string& param
+		) const;
 
 	private:
 		std::string m_name;
