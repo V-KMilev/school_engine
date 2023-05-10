@@ -34,17 +34,28 @@ bool ActionHandle::handle_input(const std::string &content) {
 		return false;
 	}
 
+	if(m_type == FunctionType::ALL) {
+		m_all_handle.set_name(name);
+
+		uint32_t solves = m_all_handle.solve(m_functions, m_solves);
+
+		return true;
+	}
+
 	if(m_type == FunctionType::SOLVE) {
 
 		SolveHandle newFunc(name);
 
 		newFunc.handle_params(params);
 
-		newFunc.solve(m_functions);
+		newFunc.solve(m_functions, m_solves);
 
 		m_solves.insert(
 			name,
-			newFunc.get_solve()
+			Pair<std::string, bool>(
+				newFunc.get_params(),
+				newFunc.get_solve()
+			)
 		);
 
 		return true;
@@ -82,13 +93,17 @@ const LogicalTree<std::string>& ActionHandle::get_logical_tree(const std::string
 }
 
 const bool& ActionHandle::get_solve(const std::string& function) const {
-	return m_solves.get(function);
+	return m_solves.get(function).second;
+}
+
+const bool& ActionHandle::get_all_solves(const std::string& function) const {
+	return m_solves.get(function).second;
 }
 
 bool ActionHandle::handle_type(const std::string &type) {
 
 	if(type[0] != 'D' && type[0] != 'S' && type[0] != 'A' && type[0] != 'F') {
-		std::cerr << "[handle_type ERROR] > Unknow function set!\n";
+		std::cerr << "[handle_type ERROR] > Unknow function set\n";
 
 		return false;
 	}
@@ -108,7 +123,7 @@ bool ActionHandle::handle_type(const std::string &type) {
 	else {
 		m_type = FunctionType::NONE;
 
-		std::cerr << "[handle_type ERROR] > Unknow function set!\n";
+		std::cerr << "[handle_type ERROR] > Unknow function set\n";
 
 		return false;
 	}
@@ -120,7 +135,7 @@ bool ActionHandle::handle_name(const std::string &name) {
 	StringHandle sh;
 
 	if(sh.contains(name, invalid_symbols)) {
-		std::cerr << "[ERROR] Invaid function name set!\n";
+		std::cerr << "[ERROR] Invaid function name set\n";
 
 		return false;
 	}

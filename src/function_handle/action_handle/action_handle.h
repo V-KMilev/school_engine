@@ -6,6 +6,8 @@
 #include "pair.h"
 #include "logical_tree.h"
 
+#include "all_handle.h"
+
 enum class FunctionType {
 	NONE   = 0,
 	DEFINE = 1,
@@ -26,6 +28,8 @@ class ActionHandle {
 
 		const bool& get_solve(const std::string& function) const;
 
+		const bool& get_all_solves(const std::string& function) const;
+
 	private:
 		bool handle_type(const std::string &type);
 
@@ -33,9 +37,10 @@ class ActionHandle {
 
 		std::string remove_white_spaces(const std::string &content);
 
-	private:
+	public:
 		FunctionType m_type;
 
 		HashMap<Pair<std::string, LogicalTree<std::string>>> m_functions;
-		HashMap<bool> m_solves;
+		HashMap<Pair<std::string, bool>> m_solves;
+		AllHandle m_all_handle;
 };
