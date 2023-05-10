@@ -108,7 +108,7 @@ bool DefineHandle::single_param(
 		const char& c = current_data[0];
 
 		if(!is_valid(functions, std::string(1, c))) {
-			std::cerr << "[single_param ERROR] > Invalid parameter set!\n";
+			std::cerr << "[single_param ERROR] > Invalid parameter set\n";
 			exit(-1);
 		}
 
@@ -129,7 +129,7 @@ bool DefineHandle::single_param(
 			const char& c = current_data[idx];
 
 			if(!is_valid(functions, std::string(1, c))) {
-				std::cerr << "[single_param ERROR] > Invalid parameter set!\n";
+				std::cerr << "[single_param ERROR] > Invalid parameter set\n";
 				exit(-1);
 			}
 
@@ -162,7 +162,7 @@ bool DefineHandle::clean_func_param(
 		func_name = sh.extract_string_between_ii(func_name, 0, func_name.size() - 1);
 
 		if(!is_valid(functions, func_name)) {
-			std::cerr << "[clean_func_param ERROR] > Invalid parameter set!\n";
+			std::cerr << "[clean_func_param ERROR] > Invalid parameter set\n";
 			exit(-1);
 		}
 
@@ -204,7 +204,7 @@ bool DefineHandle::dirty_func_param(
 		if(c != clean_data[0]) {
 
 			if(!is_valid(functions, std::string(1, c))) {
-				std::cerr << "[dirty_func_param ERROR] > Invalid parameter set!\n";
+				std::cerr << "[dirty_func_param ERROR] > Invalid parameter set\n";
 				exit(-1);
 			}
 
@@ -229,7 +229,7 @@ bool DefineHandle::dirty_func_param(
 			func_name = sh.extract_string_between_ii(func_name, 0, func_name.size() - 1);
 
 			if(!is_valid(functions, func_name)) {
-				std::cerr << "[dirty_func_param ERROR] > Invalid parameter set!\n";
+				std::cerr << "[dirty_func_param ERROR] > Invalid parameter set\n";
 				exit(-1);
 			}
 
@@ -264,7 +264,7 @@ Pair<std::string, LogicalTree<std::string>> DefineHandle::update_in_func(
 	const std::string& func_params = functions.get(func_name).first;
 
 	if(current_params.size() < func_params.size() || current_params.size() > func_params.size()) {
-		std::cerr << "[update_in_func ERROR] > Invalid function parameter set!\n";
+		std::cerr << "[update_in_func ERROR] > Invalid function parameter set\n";
 		exit(-1);
 	}
 
@@ -286,7 +286,7 @@ Pair<std::string, LogicalTree<std::string>> DefineHandle::update_in_func(
 		const char& old_c = func_params[idx];
 
 		if(!is_valid(functions, std::string(1, new_c))) {
-			std::cerr << "[update_in_func ERROR] > Invalid function parameter set!\n";
+			std::cerr << "[update_in_func ERROR] > Invalid function parameter set\n";
 			exit(-1);
 		}
 
