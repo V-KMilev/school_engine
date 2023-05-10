@@ -20,7 +20,14 @@ class SolveHandle {
 
 		bool get_solve() const;
 
-		void solve(const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions);
+		void set_name(const std::string& name);
+
+		void set_params(const std::string& params);
+
+		void solve(
+			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
+			const HashMap<Pair<std::string, bool>>& solves
+		);
 
 	private:
 		std::string m_name;
