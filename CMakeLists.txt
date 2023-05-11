@@ -15,6 +15,7 @@ set(SOURCES
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/string_handle/string_handle.cpp
 
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/file/file_handle.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/post.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/string_array.cpp
 
@@ -28,6 +29,7 @@ set(HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle/solve_handle
 	${CMAKE_CURRENT_SOURCE_DIR}/src/string_handle
 
+	${CMAKE_CURRENT_SOURCE_DIR}/src/common/file
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/hash_map
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/pair
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/stack
