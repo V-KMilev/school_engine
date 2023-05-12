@@ -29,6 +29,10 @@ set(HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle/solve_handle
 	${CMAKE_CURRENT_SOURCE_DIR}/src/string_handle
 
+	${CMAKE_CURRENT_SOURCE_DIR}/src/render/renderer
+	${CMAKE_CURRENT_SOURCE_DIR}/src/render/renderer
+	${CMAKE_CURRENT_SOURCE_DIR}/src/render/ui
+
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/file
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/hash_map
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/pair
