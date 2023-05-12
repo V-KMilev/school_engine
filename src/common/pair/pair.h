@@ -23,14 +23,22 @@ class Pair {
 		}
 
 		bool operator > (const Pair& other) const {
-			return other < *this;
+			return *this > other;
 		}
 
 		bool operator <= (const Pair& other) const {
-			return !(other < *this);
+			return !(*this > other);
 		}
 
 		bool operator>=(const Pair& other) const {
 			return !(*this < other);
+		}
+
+		operator std::string() const {
+			std::string content = "";
+
+			content += "{\n" + first + "\n" + second + "\n}";
+
+			return stream.str();
 		}
 };

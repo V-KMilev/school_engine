@@ -89,6 +89,27 @@ class LogicalTree {
 			return m_root == other.m_root;
 		}
 
+		operator std::string () const {
+			std::string content = "";
+
+			Stack<const TreeNode<T>*> s;
+			const TreeNode<T>* node = m_root;
+
+			while(node != nullptr || !s.empty()) {
+				while(node != nullptr) {
+					s.push(node);
+
+					node = mode->left;
+				}
+				node = s.pop();
+
+				content += node->value + " ";
+				node = node->left;
+
+			}
+			return content;
+		}
+
 		TreeNode<T>* get_root() const;
 
 		void build(

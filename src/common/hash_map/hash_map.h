@@ -29,6 +29,10 @@ class HashMap {
 
 		int get_count() const;
 
+		std::string save_in_file(const std::string& name) const;
+
+		void read_from_file(const std::string& content);
+
 	private:
 		int hash(const std::string& key) const;
 
@@ -178,6 +182,29 @@ int HashMap<T>::get_size() const {
 template<typename T>
 int HashMap<T>::get_count() const {
 	return m_count;
+}
+
+template<typename T>
+std::string HashMap<T>::save_in_file(const std::string& name) const {
+	std::string content = "";
+
+	content += name + " {\n"
+
+	for (int idx = 0; idx < m_size; idx++) {
+
+		HashNode<T>* current = m_map[idx];
+
+		while(current != nullptr) {
+
+			content += current->key + " : " + std::to_string(current->value) + "\n";
+
+			current = current->next;
+		}
+	}
+
+	content += "}"
+
+	return content;
 }
 
 template<typename T>
