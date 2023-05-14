@@ -325,7 +325,7 @@ bool DefineHandle::is_valid(
 		}
 	}
 
-	if(functions.get_count() == 0) {
+	if(functions.count() == 0) {
 		return false;
 	}
 

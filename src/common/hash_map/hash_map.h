@@ -25,11 +25,11 @@ class HashMap {
 
 		const T& get(const std::string& key) const;
 
-		HashNode<T>** get_map() const;
+		HashNode<T>** map() const;
 
-		int get_size() const;
+		int size() const;
 
-		int get_count() const;
+		int count() const;
 
 		std::string save_in_file(const std::string& name) const;
 
@@ -177,17 +177,17 @@ const T& HashMap<T>::get(const std::string& key) const {
 }
 
 template<typename T>
-HashNode<T>** HashMap<T>::get_map() const {
+HashNode<T>** HashMap<T>::map() const {
 	return m_map;
 }
 
 template<typename T>
-int HashMap<T>::get_size() const {
+int HashMap<T>::size() const {
 	return m_size;
 }
 
 template<typename T>
-int HashMap<T>::get_count() const {
+int HashMap<T>::count() const {
 	return m_count;
 }
 

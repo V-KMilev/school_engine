@@ -102,7 +102,6 @@ const HashMap<Pair<std::string, bool>>& ActionHandle::get_solves() const {
 	return m_solves;
 }
 
-
 const HashMap<int>& ActionHandle::get_all_solves() const {
 	return m_all_solves;
 }
