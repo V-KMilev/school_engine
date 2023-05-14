@@ -90,24 +90,7 @@ class LogicalTree {
 		}
 
 		operator std::string () const {
-			std::string content = "";
-
-			Stack<const TreeNode<T>*> s;
-			const TreeNode<T>* node = m_root;
-
-			while(node != nullptr || !s.empty()) {
-				while(node != nullptr) {
-					s.push(node);
-
-					node = mode->left;
-				}
-				node = s.pop();
-
-				content += node->value + " ";
-				node = node->left;
-
-			}
-			return content;
+			return get_in_string(m_root);
 		}
 
 		TreeNode<T>* get_root() const;
@@ -135,6 +118,8 @@ class LogicalTree {
 		);
 
 		bool evaluate(const TreeNode<T>* node, const std::string& values) const;
+
+		std::string get_in_string(const TreeNode<T>* node) const;
 
 	private:
 		TreeNode<T>* m_root;
@@ -177,7 +162,7 @@ TreeNode<T>* LogicalTree<T>::build_tree(
 	Stack<TreeNode<T>*> stack;
 	Stack<TreeNode<T>*> braket_stack;
 
-	for (int idx = body.count(); idx >= 0; idx--) {
+	for (int idx = body.count() - 1; idx >= 0; idx--) {
 
 		const std::string& data = body.data()[idx];
 
@@ -200,7 +185,16 @@ TreeNode<T>* LogicalTree<T>::build_tree(
 
 	TreeNode<T>* right = stack.pop();
 	TreeNode<T>* root = stack.pop();
-	root->right = right;
+
+	TreeNode<T>* copy = root;
+
+	while(true) {
+		if(copy->right == nullptr) {
+			copy->right = right;
+			break;
+		}
+		copy = root->right;
+	}
 
 	return root;
 }
@@ -264,4 +258,23 @@ bool LogicalTree<T>::evaluate(const TreeNode<T>* node, const std::string& values
 
 	std::cerr << "[evaluate ERROR] > Unexpected error\n";
 	exit(-1);
+}
+template<typename T>
+std::string LogicalTree<T>::get_in_string(const TreeNode<T>* node) const {
+	if (node == nullptr) {
+		return "";
+	}
+
+	std::string left = "";
+	std::string right = "";
+
+	if(node->left != nullptr) {
+		left = get_in_string(node->left);
+	}
+
+	if(node->right != nullptr) {
+		right = get_in_string(node->right);
+	}
+
+	return node->value + " " + right + left;
 }
