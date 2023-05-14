@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "stack.h"
+
 std::string* StringHandle::split(const std::string &content, const char delimiter) {
 	m_substrings.reset_data();
 
@@ -242,4 +244,62 @@ int StringHandle::get_count(const std::string &content, const std::string &to_fi
 	}
 
 	return count;
+}
+
+int StringHandle::precedence(const std::string& str) {
+	if(str == "&") {
+		return 2;
+	}
+	if(str == "|") {
+		return 1;
+	}
+
+	return 0;
+}
+
+StringArray StringHandle::convert_to_postfix(const StringArray& body) {
+	StringArray new_body;
+
+	Stack<std::string> st;
+
+	for (int idx = 0; idx < body.count(); idx++) {
+		const std::string& str = body.data()[idx];
+
+		if(str.size() > 1) {
+			new_body.push_back(str);
+		}
+
+		else if (str == "&" || str == "|") {
+			while (!st.empty() && precedence(st.top()) >= precedence(str)) {
+				new_body.push_back(st.pop());
+			}
+
+			st.push(str);
+		}
+
+		else if (str == "(") {
+			st.push(str);
+		}
+
+		else if (str == ")") {
+			while (!st.empty() && st.top() != "(") {
+				new_body.push_back(st.pop());
+			}
+
+			st.pop();
+		}
+		else if(str.size() == 1) {
+			new_body.push_back(str);
+		}
+		else {
+			std::cerr << "[convert_to_postfix ERROR] > Unexpected error\n";
+			exit(-1);
+		}
+	}
+
+	while (!st.empty()) {
+		new_body.push_back(st.pop());
+	}
+	
+	return new_body;
 }
