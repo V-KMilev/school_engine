@@ -55,6 +55,8 @@ void AllHandle::find_all(
 		}
 
 		if(!ignore_solves && solve.first == params) {
+			solves.insert(m_name + "-" + params, Pair<std::string, bool>(params, solve.second));
+
 			m_solves |= (1 << idx);
 			continue;
 		}
@@ -66,5 +68,7 @@ void AllHandle::find_all(
 		if(solver.get_solve() == 1) {
 			m_solves |= (1 << idx);
 		}
+
+		solves.insert(m_name + "-" + params, Pair<std::string, bool>(params, solver.get_solve()));
 	}
 }

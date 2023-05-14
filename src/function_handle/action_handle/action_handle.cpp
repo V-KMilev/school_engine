@@ -39,6 +39,8 @@ bool ActionHandle::handle_input(const std::string &content) {
 
 		uint32_t solves = m_all_handle.solve(m_functions, m_solves);
 
+		m_all_solves.insert(name, solves);
+
 		return true;
 	}
 
@@ -92,12 +94,17 @@ const LogicalTree<std::string>& ActionHandle::get_logical_tree(const std::string
 	return m_functions.get(function).second;
 }
 
-const bool& ActionHandle::get_solve(const std::string& function) const {
-	return m_solves.get(function).second;
+const HashMap<Pair<std::string, LogicalTree<std::string>>>& ActionHandle::get_functions() const {
+	return m_functions;
 }
 
-const bool& ActionHandle::get_all_solves(const std::string& function) const {
-	return m_solves.get(function).second;
+const HashMap<Pair<std::string, bool>>& ActionHandle::get_solves() const {
+	return m_solves;
+}
+
+
+const HashMap<int>& ActionHandle::get_all_solves() const {
+	return m_all_solves;
 }
 
 bool ActionHandle::handle_type(const std::string &type) {

@@ -26,9 +26,11 @@ class ActionHandle {
 
 		const LogicalTree<std::string>& get_logical_tree(const std::string& function) const;
 
-		const bool& get_solve(const std::string& function) const;
+		const HashMap<Pair<std::string, LogicalTree<std::string>>>& get_functions() const;
 
-		const bool& get_all_solves(const std::string& function) const;
+		const HashMap<Pair<std::string, bool>>& get_solves() const;
+
+		const HashMap<int>& get_all_solves() const;
 
 	private:
 		bool handle_type(const std::string &type);
@@ -42,5 +44,7 @@ class ActionHandle {
 
 		HashMap<Pair<std::string, LogicalTree<std::string>>> m_functions;
 		HashMap<Pair<std::string, bool>> m_solves;
+		HashMap<int> m_all_solves;
+
 		AllHandle m_all_handle;
 };

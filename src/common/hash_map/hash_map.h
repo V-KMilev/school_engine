@@ -25,6 +25,8 @@ class HashMap {
 
 		const T& get(const std::string& key) const;
 
+		HashNode<T>** get_map() const;
+
 		int get_size() const;
 
 		int get_count() const;
@@ -172,6 +174,11 @@ const T& HashMap<T>::get(const std::string& key) const {
 	// Return a default-constructed value if the key is not found
 	static T default_value;
 	return default_value;
+}
+
+template<typename T>
+HashNode<T>** HashMap<T>::get_map() const {
+	return m_map;
 }
 
 template<typename T>
