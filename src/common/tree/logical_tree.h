@@ -162,41 +162,14 @@ TreeNode<T>* LogicalTree<T>::build_tree(
 	Stack<TreeNode<T>*> stack;
 	Stack<TreeNode<T>*> braket_stack;
 
-	for (int idx = body.count() - 1; idx >= 0; idx--) {
+	for (int idx = 0; idx < body.count(); idx++) {
 
-		const std::string& data = body.data()[idx];
+		const std::string param = body.data()[idx];
 
-		if(data == ")") {
-
-			while(body.data()[--idx] != "(") {
-				operator_set(braket_stack, body.data()[idx], functions);
-			}
-
-			TreeNode<T>* right = braket_stack.pop();
-			TreeNode<T>* braket_root = braket_stack.pop();
-			braket_root->right = right;
-
-			stack.push(braket_root);
-		}
-		else {
-			operator_set(stack, data, functions);
-		}
+		operator_set(stack, param, functions);
 	}
 
-	TreeNode<T>* right = stack.pop();
-	TreeNode<T>* root = stack.pop();
-
-	TreeNode<T>* copy = root;
-
-	while(true) {
-		if(copy->right == nullptr) {
-			copy->right = right;
-			break;
-		}
-		copy = root->right;
-	}
-
-	return root;
+	return stack.pop();
 }
 
 template<typename T>
@@ -213,13 +186,31 @@ void LogicalTree<T>::operator_set(
 
 		stack.push(node);
 	}
-	else if (param == "!") {
-		TreeNode<T>* node = new TreeNode<T>(param);
 
-		node->left = stack.pop();
+	else if(
+		!stack.empty() &&
+		stack.top()->value == "!" &&
+		stack.top()->left == nullptr
+	) {
+		if(param.size() > 1) {
+			TreeNode<T>* func = functions.get(param).second.get_root();
 
-		stack.push(node);
+			if(func != nullptr) {
+				stack.push(func);
+			}
+		}
+		else {
+			stack.push(new TreeNode<T>(param));
+		}
+
+		stack.top()->left = stack.pop();
+		return;
 	}
+
+	else if (param == "!") {
+		stack.push(new TreeNode<T>(param));
+	}
+
 	else {
 		if(param.size() > 1) {
 			TreeNode<T>* func = functions.get(param).second.get_root();
@@ -278,3 +269,4 @@ std::string LogicalTree<T>::get_in_string(const TreeNode<T>* node) const {
 
 	return node->value + " " + right + left;
 }
+

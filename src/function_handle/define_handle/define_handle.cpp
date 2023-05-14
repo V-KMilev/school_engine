@@ -79,7 +79,10 @@ bool DefineHandle::handle_body(
 			return false;
 		}
 	}
-	m_function.build(clean_body_data, fixed_functions);
+
+	StringArray post_data = sh.convert_to_postfix(clean_body_data);
+
+	m_function.build(post_data, fixed_functions);
 
 	return true;
 }
