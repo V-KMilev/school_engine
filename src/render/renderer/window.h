@@ -10,17 +10,26 @@
 
 #include <gl_render.h>
 
-void main_loop(GLFWwindow* window, const Renderer& render);
+#include "config.h"
 
-int windows()
-{
+#include "ui.h"
+
+const char* gl_version = "#version 330";
+
+void main_loop(
+	GLFWwindow* window,
+	const Renderer& render,
+	UIHandle& ui
+);
+
+int windows() {
 	// Initialize GLFW
 	if (!glfwInit())
 		return -1;
 
 	// Create a windowed mode window and its OpenGL context
 	GLFWwindow* window = glfwCreateWindow(
-		640, 480,
+		Config::window_width, Config::window_height,
 		"Hello World",
 		NULL,
 		NULL
@@ -44,8 +53,11 @@ int windows()
 		glfwMakeContextCurrent(window);
 
 		Renderer render;
+		UIHandle ui;
 
-		main_loop(window, render);
+		ui.setup(window, gl_version);
+
+		main_loop(window, render, ui);
 	}
 
 	// Clean up
@@ -54,8 +66,11 @@ int windows()
 	return 0;
 }
 
-void main_loop(GLFWwindow* window, const Renderer& render) {
-
+void main_loop(
+	GLFWwindow* window,
+	const Renderer& render,
+	UIHandle& ui
+) {
 	Shader s_quad(
 		"F:/cpp/school_engine/src/render/shader/vertex/v_quad.shader",
 		"F:/cpp/school_engine/src/render/shader/fragment/f_quad.shader",
@@ -68,9 +83,14 @@ void main_loop(GLFWwindow* window, const Renderer& render) {
 		render.clear();
 		render.clearColor();
 
+		ui.newframe();
+
 		{
-		render.drawQuad(s_quad, GL_TRIANGLES);
+			render.drawQuad(s_quad, GL_TRIANGLES);
+			ui.content();
 		}
+
+		ui.render();
 
 		// Swap front and back buffers
 		glfwSwapBuffers(window);
@@ -78,4 +98,6 @@ void main_loop(GLFWwindow* window, const Renderer& render) {
 		// Poll for and process events
 		glfwPollEvents();
 	}
+
+	ui.shutdown();
 }

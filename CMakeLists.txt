@@ -19,6 +19,9 @@ set(SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/post.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/string_array.cpp
 
+	${CMAKE_CURRENT_SOURCE_DIR}/src/render/ui/console/console.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/render/ui/contoller/controller.cpp
+
 	main.cpp
 )
 
@@ -29,16 +32,18 @@ set(HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/function_handle/solve_handle
 	${CMAKE_CURRENT_SOURCE_DIR}/src/string_handle
 
-	${CMAKE_CURRENT_SOURCE_DIR}/src/render/renderer
-	${CMAKE_CURRENT_SOURCE_DIR}/src/render/renderer
-	${CMAKE_CURRENT_SOURCE_DIR}/src/render/ui
-
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/file
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/hash_map
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/pair
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/stack
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common/tree
 	${CMAKE_CURRENT_SOURCE_DIR}/src/common
+
+	${CMAKE_CURRENT_SOURCE_DIR}/src/render/renderer
+	${CMAKE_CURRENT_SOURCE_DIR}/src/render/ui/console
+	${CMAKE_CURRENT_SOURCE_DIR}/src/render/ui/contoller
+	${CMAKE_CURRENT_SOURCE_DIR}/src/render/ui
+	${CMAKE_CURRENT_SOURCE_DIR}/src/render
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
