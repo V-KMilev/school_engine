@@ -1,8 +1,9 @@
 #pragma once
 
-#include "action_handle.h"
-
 #include <vector>
+
+#include "action_handle.h"
+#include "file_handle.h"
 
 class Controller {
 	public:
@@ -14,6 +15,8 @@ class Controller {
 
 		void draw() const;
 
+		void save(bool& flag) const;
+
 	private:
 		void defines() const;
 
@@ -24,4 +27,5 @@ class Controller {
 
 	private:
 		ActionHandle m_ah;
+		FileHandle m_fh;
 };

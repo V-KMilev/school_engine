@@ -75,14 +75,22 @@ void UIHandle::render() const {
 
 void UIHandle::content() {
 
+	static bool run_new  = false;
+	static bool run_open = false;
+	static bool run_save = false;
+
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
-			ImGui::MenuItem("New");
-			ImGui::MenuItem("Open");
-			ImGui::MenuItem("Save");
+			ImGui::MenuItem("New", "Ctrl + N", &run_new);
+			ImGui::MenuItem("Open", "Ctrl + O", &run_open);
+			ImGui::MenuItem("Save", "Ctrl + S", &run_save);
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
+	}
+
+	if(run_save) {
+		m_controller.save(run_save);
 	}
 
 	m_console.draw();
@@ -153,7 +161,7 @@ void UIHandle::setStyle() const {
 	colors[ImGuiCol_CheckMark]            = mActive;
 	colors[ImGuiCol_Separator]            = mActive;
 
-	colors[ImGuiCol_ScrollbarBg]          = ImVec4(mHovered.x / 1.5f, mHovered.x / 1.5f, mHovered.x / 1.5f, 1.0f);
+	colors[ImGuiCol_ScrollbarBg]          = ImVec4(mHovered.x / 1.5f, mHovered.y / 1.5f, mHovered.z / 1.5f, 1.0f);
 	colors[ImGuiCol_ScrollbarGrab]        = mDefault;
 	colors[ImGuiCol_ScrollbarGrabHovered] = mHovered;
 	colors[ImGuiCol_ScrollbarGrabActive]  = mActive;

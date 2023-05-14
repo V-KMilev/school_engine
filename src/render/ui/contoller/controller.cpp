@@ -49,8 +49,8 @@ void Controller::defines() const {
 
 	static std::string func_value = "";
 
-	for(int idx = 0; idx < m_ah.get_functions().get_size(); idx++) {
-		HashNode<Pair<std::string, LogicalTree<std::string>>>* node = m_ah.get_functions().get_map()[idx];
+	for(int idx = 0; idx < m_ah.get_functions().size(); idx++) {
+		HashNode<Pair<std::string, LogicalTree<std::string>>>* node = m_ah.get_functions().map()[idx];
 
 		while(node != nullptr) {
 			std::string func_name = node->key;
@@ -92,8 +92,8 @@ void Controller::solves() const {
 
 	static std::string func_value = "";
 
-	for(int idx = 0; idx < m_ah.get_solves().get_size(); idx++) {
-		HashNode<Pair<std::string, bool>>* node = m_ah.get_solves().get_map()[idx];
+	for(int idx = 0; idx < m_ah.get_solves().size(); idx++) {
+		HashNode<Pair<std::string, bool>>* node = m_ah.get_solves().map()[idx];
 
 		while(node != nullptr) {
 			std::string func_name = node->key;
@@ -140,14 +140,14 @@ void Controller::alls() const {
 
 	static std::string func_value = "";
 
-	for(int idx = 0; idx < m_ah.get_all_solves().get_size(); idx++) {
-		HashNode<int>* solve = m_ah.get_all_solves().get_map()[idx];
+	for(int idx = 0; idx < m_ah.get_all_solves().size(); idx++) {
+		HashNode<int>* solve = m_ah.get_all_solves().map()[idx];
 
 		while(solve != nullptr) {
 			std::string func_name = solve->key;
 
 			if(ImGui::Selectable(func_name.c_str())) {
-				func_value += std::to_string(solve->value);
+				func_value = std::to_string(solve->value);
 			}
 
 			solve = solve->next;
@@ -167,4 +167,51 @@ void Controller::alls() const {
 	ImGui::Spacing();
 
 	ImGui::Separator();
+}
+
+
+void Controller::save(bool& flag) const {
+	ImGui::OpenPopup("Save As");
+
+	static char save_path[256];
+
+	// Always center this window when appearing
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if(ImGui::BeginPopupModal("Save As", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+
+		ImGui::Text("Are you sure you want to save this file?");
+
+		ImGui::Spacing();
+
+		ImGui::InputTextWithHint("File path", m_fh.path().data(), save_path, 256);
+
+		ImGui::Spacing();
+
+		ImGui::Separator();
+
+		ImGui::Spacing();
+
+		std::string file_name = std::string(save_path);
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+
+		ImGui::PopStyleVar();
+
+		if(ImGui::Button("SAVE", ImVec2(135, 0)) && save_path[0] != '\0') {
+			m_fh.save(m_ah, file_name);
+		}
+
+		ImGui::SetItemDefaultFocus();
+
+		ImGui::SameLine();
+
+		if(ImGui::Button("Cancel", ImVec2(135, 0))) {
+			flag = false;
+
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
 }

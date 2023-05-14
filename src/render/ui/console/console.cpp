@@ -11,11 +11,11 @@ void Console::clear() {
 }
 
 void Console::draw() {
-	ImGui::SetNextWindowPos(ImVec2(0, ImGui::GetIO().DisplaySize.y - 400));
-	ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x - 720, 400));
+	ImGui::SetNextWindowPos(ImVec2(0, ImGui::GetIO().DisplaySize.y - 450));
+	ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x - 720, 450));
 
 	ImGui::Begin("Console", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
-	const float footerHeight = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
+	const float footerHeight = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing() + 3.0;
 	ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footerHeight), false, ImGuiWindowFlags_HorizontalScrollbar);
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 1));
@@ -32,8 +32,12 @@ void Console::draw() {
 	}
 
 	ImGui::PopStyleVar();
+
 	ImGui::EndChild();
+
 	ImGui::Separator();
+
+	ImGui::Spacing();
 
 	ImGuiInputTextFlags input_flags = ImGuiInputTextFlags_EnterReturnsTrue;
 
@@ -47,8 +51,8 @@ void Console::draw() {
 		ImGui::SetKeyboardFocusHere(-1); // Set focus back to input field
 	}
 
-	const ImVec2 buttonSize(ImGui::CalcTextSize("Clear All").x + 20, 0);
-	ImGui::SameLine(ImGui::GetWindowWidth() - buttonSize.x - ImGui::GetStyle().ItemSpacing.x);
+	const ImVec2 buttonSize(ImGui::CalcTextSize("Clear All").x + 50.0, 0);
+	ImGui::SameLine(ImGui::GetWindowWidth() - buttonSize.x - ImGui::GetStyle().ItemSpacing.x - 10.0);
 
 	if (ImGui::Button("Clear All", buttonSize)) {
 		clear();
