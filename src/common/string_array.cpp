@@ -1,9 +1,12 @@
 #include "string_array.h"
 
 StringArray::StringArray(std::string* string_ptr) : m_size(11), m_count(0) {
-	while (string_ptr[m_count] != "") {
+	while (string_ptr[m_count] != "" || string_ptr[m_count] == "\n") {
+		std::string a = string_ptr[m_count];
 		m_count++;
 	}
+
+	std::string a = string_ptr[m_count];
 
 	m_size = m_count * 2;
 

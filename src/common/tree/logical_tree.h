@@ -267,6 +267,9 @@ std::string LogicalTree<T>::get_in_string(const TreeNode<T>* node) const {
 		right = get_in_string(node->right);
 	}
 
-	return node->value + " " + right + left;
-}
+	if(node->value == "!") {
+		return " " + node->value + left;
+	}
 
+	return right + left + " " + node->value;
+}

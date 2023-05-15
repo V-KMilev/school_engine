@@ -19,7 +19,7 @@ class FileHandle {
 
 		void save(const ActionHandle& ah, const std::string& path = "") const;
 
-		ActionHandle read() const;
+		void read(ActionHandle& ah, const std::string& path) const;
 
 		void leave_check(const ActionHandle& ah) const;
 

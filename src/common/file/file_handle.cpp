@@ -12,13 +12,18 @@ void FileHandle::set_auto_save(AutoSaveMode mode) {
 }
 
 void FileHandle::save(const ActionHandle& ah, const std::string& path) const {
+	std::string open_path = path;
+
+	if(open_path == "") {
+		open_path = m_path;
+	}
 
 	std::string content = "";
 
 	content += "DEFINES{\n";
 	
-	for(int idx = 0; idx < ah.get_functions().size(); idx++) {
-		HashNode<Pair<std::string, LogicalTree<std::string>>>* node = ah.get_functions().map()[idx];
+	for(int idx = 0; idx < ah.functions().size(); idx++) {
+		HashNode<Pair<std::string, LogicalTree<std::string>>>* node = ah.functions().map()[idx];
 
 		while(node != nullptr) {
 
@@ -39,12 +44,10 @@ void FileHandle::save(const ActionHandle& ah, const std::string& path) const {
 
 	content += "}\n";
 
-	content += "\n";
-
 	content += "SOLVES{\n";
 	
-	for(int idx = 0; idx < ah.get_solves().size(); idx++) {
-		HashNode<Pair<std::string, bool>>* node = ah.get_solves().map()[idx];
+	for(int idx = 0; idx < ah.solves().size(); idx++) {
+		HashNode<Pair<std::string, bool>>* node = ah.solves().map()[idx];
 
 		while(node != nullptr) {
 
@@ -63,12 +66,10 @@ void FileHandle::save(const ActionHandle& ah, const std::string& path) const {
 
 	content += "}\n";
 
-	content += "\n";
-
 	content += "ALLS{\n";
 	
-	for(int idx = 0; idx < ah.get_all_solves().size(); idx++) {
-		HashNode<int>* node = ah.get_all_solves().map()[idx];
+	for(int idx = 0; idx < ah.all_solves().size(); idx++) {
+		HashNode<int>* node = ah.all_solves().map()[idx];
 
 		while(node != nullptr) {
 
@@ -85,17 +86,10 @@ void FileHandle::save(const ActionHandle& ah, const std::string& path) const {
 
 	content += "}\n";
 
-	// std::string open_path = path;
-	std::string open_path = m_path;
-
-	// if(open_path == "") {
-	// 	open_path = m_path;
-	// }
-
 	std::ofstream out(open_path, std::ios::out | std::ios::binary);
 
 	if (!out.is_open()) {
-		std::cout << "[handle_type ERROR] > Failed to open file '" + m_path + "'\n";
+		std::cout << "[save ERROR] > Failed to open file '" + open_path + "'\n";
 		return;
 	}
 
@@ -104,9 +98,160 @@ void FileHandle::save(const ActionHandle& ah, const std::string& path) const {
 	out.close();
 }
 
-ActionHandle FileHandle::read() const {
-	ActionHandle ah;
-	return ah;
+void FileHandle::read(ActionHandle& ah, const std::string& path) const {
+	std::string open_path = path;
+
+	if(open_path == "") {
+		open_path = m_path;
+	}
+
+	std::ifstream in(open_path);
+
+	if (!in.is_open()) {
+		std::cout << "[read ERROR] > Failed to open file '" + open_path + "'\n";
+		return;
+	}
+
+
+	std::string content = std::string(
+		std::istreambuf_iterator<char>(in),
+		std::istreambuf_iterator<char>()
+	);
+
+	if(content == "") {
+		std::cout << "[read ERROR] > Unexpected error\n";
+		return;
+	};
+
+	StringHandle sh;
+
+	StringArray line_conent = sh.split(content, '\n');
+
+	for(long long idx = 0; idx < line_conent.count(); idx++) {
+		std::string& line = line_conent.data()[idx];
+
+
+		std::string name = "";
+
+		if(sh.contains(line, '{')) {
+			name = sh.remove_symbol(line, '\t');
+			name = sh.remove_symbol(name, '{');
+
+			std::string func_name = "";
+
+			int depth = 1;
+
+			if(name == "DEFINES") {
+				while(depth > 0) {
+					line = line_conent.data()[++idx];
+
+					if(sh.contains(line, '{')) {
+						func_name = sh.remove_symbol(line, '\t');
+						func_name = sh.remove_symbol(func_name, '{');
+
+						depth++;
+						continue;
+					}
+					else if(sh.contains(line, '}')) {
+						depth--;
+						continue;
+					}
+					else if(line != "\n") {
+						std::string first    = sh.remove_symbol(line, '\t');
+						std::string s_second = line_conent.data()[++idx];
+
+						s_second = sh.remove_symbol(s_second, '\t');
+						s_second = sh.remove_symbol(s_second, ' ');
+
+						StringArray second;
+
+						for(int in_idx = 0; in_idx < s_second.size(); in_idx++){ 
+							second.push_back(s_second[in_idx]);
+						}
+
+						LogicalTree<std::string> func;
+
+						func.build(second, ah.functions());
+
+						ah.functions().insert(
+							func_name,
+							Pair<std::string, LogicalTree<std::string>>(
+								first,
+								func
+							)
+						);
+					}
+				}
+			}
+
+			else if(name == "SOLVES") {
+				while(depth > 0) {
+					line = line_conent.data()[++idx];
+
+					if(sh.contains(line, '{')) {
+						func_name = sh.remove_symbol(line, '\t');
+						func_name = sh.remove_symbol(func_name, '{');
+
+						depth++;
+						continue;
+					}
+					else if(sh.contains(line, '}')) {
+						depth--;
+						continue;
+					}
+					else if(line != "\n") {
+						std::string first = sh.remove_symbol(line, '\t');;
+						std::string s_second = line_conent.data()[++idx];
+
+						bool second = false;
+
+						s_second = sh.remove_symbol(s_second, '\t');
+
+						if(s_second[0] == '1') {
+							second = true;
+						}
+
+						StringArray val_sa;
+
+						ah.solves().insert(
+							func_name,
+							Pair<std::string, bool>(
+								first,
+								second
+							)
+						);
+					}
+				}
+			}
+
+			else if(name == "ALLS") {
+				while(depth > 0) {
+					line = line_conent.data()[++idx];
+
+					if(sh.contains(line, '{')) {
+						func_name = sh.remove_symbol(line, '\t');
+						func_name = sh.remove_symbol(func_name, '{');
+
+						depth++;
+						continue;
+					}
+					else if(sh.contains(line, '}')) {
+						depth--;
+						continue;
+					}
+					else if(line != "\n") {
+						std::string first = sh.remove_symbol(line, '\t');
+
+						ah.all_solves().insert(
+							func_name,
+							sh.to_int(first)
+						);
+					}
+				}
+			}
+		}
+	}
+	return;
 }
 
 void FileHandle::leave_check(const ActionHandle& ah) const {

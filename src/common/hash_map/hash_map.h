@@ -65,11 +65,12 @@ HashMap<T>::HashMap() : m_size(11), m_count(0) {
 template<typename T>
 HashMap<T>::~HashMap() {
 	for (int idx = 0; idx < m_size; idx++) {
+		HashNode<T>* current = m_map[idx];
 
-		while(m_map[idx] != nullptr) {
+		while (current != nullptr) {
+			HashNode<T>* temp = current;
 
-			HashNode<T>* temp = m_map[idx];
-			m_map[idx] = m_map[idx]->next;
+			current = current->next;
 
 			delete temp;
 		}
