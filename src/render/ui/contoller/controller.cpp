@@ -23,17 +23,8 @@ void Controller::draw() const {
 	ImGui::Begin("ConsoleA", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 
 	defines();
-
 	solves();
-
 	alls();
-
-	static bool showCheckbox = true;
-	ImGui::Checkbox("Show text block", &showCheckbox);
-
-	if (showCheckbox) {
-		ImGui::Text("This is a text block that will appear or disappear based on the checkbox above.");
-	}
 
 	ImGui::End();
 }
@@ -49,8 +40,8 @@ void Controller::defines() const {
 
 	static std::string func_value = "";
 
-	for(int idx = 0; idx < m_ah.get_functions().size(); idx++) {
-		HashNode<Pair<std::string, LogicalTree<std::string>>>* node = m_ah.get_functions().map()[idx];
+	for(int idx = 0; idx < m_ah.functions().size(); idx++) {
+		HashNode<Pair<std::string, LogicalTree<std::string>>>* node = m_ah.functions().map()[idx];
 
 		while(node != nullptr) {
 			std::string func_name = node->key;
@@ -92,8 +83,8 @@ void Controller::solves() const {
 
 	static std::string func_value = "";
 
-	for(int idx = 0; idx < m_ah.get_solves().size(); idx++) {
-		HashNode<Pair<std::string, bool>>* node = m_ah.get_solves().map()[idx];
+	for(int idx = 0; idx < m_ah.solves().size(); idx++) {
+		HashNode<Pair<std::string, bool>>* node = m_ah.solves().map()[idx];
 
 		while(node != nullptr) {
 			std::string func_name = node->key;
@@ -140,8 +131,8 @@ void Controller::alls() const {
 
 	static std::string func_value = "";
 
-	for(int idx = 0; idx < m_ah.get_all_solves().size(); idx++) {
-		HashNode<int>* solve = m_ah.get_all_solves().map()[idx];
+	for(int idx = 0; idx < m_ah.all_solves().size(); idx++) {
+		HashNode<int>* solve = m_ah.all_solves().map()[idx];
 
 		while(solve != nullptr) {
 			std::string func_name = solve->key;
@@ -201,6 +192,50 @@ void Controller::save(bool& flag) const {
 
 		if(ImGui::Button("SAVE", ImVec2(135, 0)) && save_path[0] != '\0') {
 			m_fh.save(m_ah, file_name);
+		}
+
+		ImGui::SetItemDefaultFocus();
+
+		ImGui::SameLine();
+
+		if(ImGui::Button("Cancel", ImVec2(135, 0))) {
+			flag = false;
+
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+}
+
+void Controller::open(bool& flag) {
+	ImGui::OpenPopup("Open");
+
+	static char save_path[256];
+
+	// Always center this window when appearing
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if(ImGui::BeginPopupModal("Open", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+
+		ImGui::Spacing();
+
+		ImGui::InputTextWithHint("File path", m_fh.path().data(), save_path, 256);
+
+		ImGui::Spacing();
+
+		ImGui::Separator();
+
+		ImGui::Spacing();
+
+		std::string file_name = std::string(save_path);
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+
+		ImGui::PopStyleVar();
+
+		if(ImGui::Button("Open", ImVec2(135, 0)) && save_path[0] != '\0') {
+			m_fh.read(m_ah, file_name);
 		}
 
 		ImGui::SetItemDefaultFocus();

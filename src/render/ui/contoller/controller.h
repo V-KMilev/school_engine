@@ -17,6 +17,8 @@ class Controller {
 
 		void save(bool& flag) const;
 
+		void open(bool& flag);
+
 	private:
 		void defines() const;
 

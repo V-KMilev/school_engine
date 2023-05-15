@@ -81,12 +81,15 @@ void UIHandle::content() {
 
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
-			ImGui::MenuItem("New", "Ctrl + N", &run_new);
 			ImGui::MenuItem("Open", "Ctrl + O", &run_open);
 			ImGui::MenuItem("Save", "Ctrl + S", &run_save);
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
+	}
+
+	if(run_open) {
+		m_controller.open(run_open);
 	}
 
 	if(run_save) {
