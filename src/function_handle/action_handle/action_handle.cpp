@@ -90,19 +90,32 @@ bool ActionHandle::handle_input(const std::string &content) {
 	return false;
 }
 
-const LogicalTree<std::string>& ActionHandle::get_logical_tree(const std::string& function) const {
+const LogicalTree<std::string>& ActionHandle::logical_tree(const std::string& function) const {
 	return m_functions.get(function).second;
 }
 
-const HashMap<Pair<std::string, LogicalTree<std::string>>>& ActionHandle::get_functions() const {
+
+const HashMap<Pair<std::string, LogicalTree<std::string>>>& ActionHandle::functions() const {
 	return m_functions;
 }
 
-const HashMap<Pair<std::string, bool>>& ActionHandle::get_solves() const {
+HashMap<Pair<std::string, LogicalTree<std::string>>>& ActionHandle::functions() {
+	return m_functions;
+}
+
+const HashMap<Pair<std::string, bool>>& ActionHandle::solves() const {
 	return m_solves;
 }
 
-const HashMap<int>& ActionHandle::get_all_solves() const {
+HashMap<Pair<std::string, bool>>& ActionHandle::solves() {
+	return m_solves;
+}
+
+const HashMap<int>& ActionHandle::all_solves() const {
+	return m_all_solves;
+}
+
+HashMap<int>& ActionHandle::all_solves() {
 	return m_all_solves;
 }
 

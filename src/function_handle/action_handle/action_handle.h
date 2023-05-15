@@ -24,13 +24,20 @@ class ActionHandle {
 
 		bool handle_input(const std::string &content);
 
-		const LogicalTree<std::string>& get_logical_tree(const std::string& function) const;
+		const LogicalTree<std::string>& logical_tree(const std::string& function) const;
 
-		const HashMap<Pair<std::string, LogicalTree<std::string>>>& get_functions() const;
+		const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions() const;
 
-		const HashMap<Pair<std::string, bool>>& get_solves() const;
+		HashMap<Pair<std::string, LogicalTree<std::string>>>& functions();
 
-		const HashMap<int>& get_all_solves() const;
+		const HashMap<Pair<std::string, bool>>& solves() const;
+
+		HashMap<Pair<std::string, bool>>& solves();
+
+		const HashMap<int>& all_solves() const;
+
+		HashMap<int>& all_solves();
+
 
 	private:
 		bool handle_type(const std::string &type);
