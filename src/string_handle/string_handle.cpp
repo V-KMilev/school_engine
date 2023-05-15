@@ -246,7 +246,7 @@ int StringHandle::get_count(const std::string &content, const std::string &to_fi
 	return count;
 }
 
-int StringHandle::precedence(const std::string& str) {
+int StringHandle::precedence(const std::string& str) const {
 	if(str == "&") {
 		return 2;
 	}
@@ -257,7 +257,7 @@ int StringHandle::precedence(const std::string& str) {
 	return 0;
 }
 
-StringArray StringHandle::convert_to_postfix(const StringArray& body) {
+StringArray StringHandle::convert_to_postfix(const StringArray& body) const {
 	StringArray new_body;
 
 	Stack<std::string> st;
@@ -300,6 +300,18 @@ StringArray StringHandle::convert_to_postfix(const StringArray& body) {
 	while (!st.empty()) {
 		new_body.push_back(st.pop());
 	}
-	
+
 	return new_body;
+}
+
+int StringHandle::to_int(const std::string& content) const {
+	int result = 0;
+
+	for(const char& c : content) {
+		if (c >= '0' && c <= '9') {
+			result = result * 10 + (c - '0');
+		}
+	}
+
+	return result;
 }

@@ -32,9 +32,11 @@ class StringHandle {
 
 		int get_count(const std::string &content, const std::string &to_find) const;
 
-		int precedence(const std::string& str);
+		int precedence(const std::string& content) const;
 
-		StringArray convert_to_postfix(const StringArray& body);
+		StringArray convert_to_postfix(const StringArray& body) const;
+
+		int to_int(const std::string& content) const;
 
 	private:
 		StringArray m_substrings;
