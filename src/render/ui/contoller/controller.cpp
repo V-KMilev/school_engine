@@ -184,13 +184,17 @@ void Controller::save(bool& flag) const {
 
 		ImGui::Spacing();
 
-		std::string file_name = std::string(save_path);
+		std::string file_name = m_fh.default_path();
+
+		if(save_path[0] != '\0') {
+			file_name =save_path;
+		}
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 
 		ImGui::PopStyleVar();
 
-		if(ImGui::Button("SAVE", ImVec2(135, 0)) && save_path[0] != '\0') {
+		if(ImGui::Button("SAVE", ImVec2(135, 0))) {
 			m_fh.save(m_ah, file_name);
 		}
 
@@ -228,13 +232,17 @@ void Controller::open(bool& flag) {
 
 		ImGui::Spacing();
 
-		std::string file_name = std::string(save_path);
+		std::string file_name = m_fh.default_path();
+
+		if(save_path[0] != '\0') {
+			file_name =save_path;
+		}
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 
 		ImGui::PopStyleVar();
 
-		if(ImGui::Button("Open", ImVec2(135, 0)) && save_path[0] != '\0') {
+		if(ImGui::Button("Open", ImVec2(135, 0))) {
 			m_fh.read(m_ah, file_name);
 		}
 

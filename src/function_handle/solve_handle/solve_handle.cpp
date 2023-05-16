@@ -10,19 +10,17 @@ SolveHandle::SolveHandle() : m_name(""), m_params(""), m_solve(false) {}
 SolveHandle::SolveHandle(const std::string& name) : m_name(name), m_params(""), m_solve(false) {}
 
 bool SolveHandle::handle_params(const std::string &params) {
-	StringHandle sh;
-
 	m_params = params;
 
-	m_params = sh.remove_symbol(m_params, ' ');
-	m_params = sh.remove_symbol(m_params, ',');
+	m_params = StringHandle::remove_symbol(m_params, ' ');
+	m_params = StringHandle::remove_symbol(m_params, ',');
 
-	if(sh.contains(m_params, invalid_symbols)) {
+	if(StringHandle::contains(m_params, invalid_symbols)) {
 		std::cerr << "[ERROR] Invaid parameter(s) set\n";
 		return false;
 	}
 
-	if(sh.contains(m_params, "23456789")) {
+	if(StringHandle::contains(m_params, "23456789")) {
 		std::cerr << "[ERROR] Invaid parameter(s) set\n";
 		return false;
 	}

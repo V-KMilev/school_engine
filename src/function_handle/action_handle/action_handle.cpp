@@ -9,17 +9,16 @@
 #include "solve_handle.h"
 
 bool ActionHandle::handle_input(const std::string &content) {
-	StringHandle sh;
 
 	StringArray type;
 
-	std::string params;
 	std::string name;
+	std::string params;
 	std::string body;
 
 	std::string fixed_content = remove_white_spaces(content);
 
-	type = sh.split_limit(fixed_content, ' ', 6);
+	type = StringHandle::split_limit(fixed_content, ' ', 6);
 
 	if(!handle_type(type.data()[0])) {
 		return false;
@@ -27,8 +26,8 @@ bool ActionHandle::handle_input(const std::string &content) {
 
 	fixed_content = remove_white_spaces(type.data()[1]);
 
-	name = sh.extract_string_between_ic(fixed_content, 0, '(');
-	params = sh.extract_string_between_cc(fixed_content, '(', ')');
+	name = StringHandle::extract_string_between_ic(fixed_content, 0, '(');
+	params = StringHandle::extract_string_between_cc(fixed_content, '(', ')');
 
 	if(!handle_name(name)) {
 		return false;
@@ -63,7 +62,7 @@ bool ActionHandle::handle_input(const std::string &content) {
 		return true;
 	}
 
-	body = sh.extract_string_between_cc(fixed_content, '"', '"');
+	body = StringHandle::extract_string_between_cc(fixed_content, '"', '"');
 
 	if(m_type == FunctionType::DEFINE) {
 		DefineHandle newFunc(name);
@@ -123,7 +122,6 @@ bool ActionHandle::handle_type(const std::string &type) {
 
 	if(type[0] != 'D' && type[0] != 'S' && type[0] != 'A' && type[0] != 'F') {
 		std::cerr << "[handle_type ERROR] > Unknow function set\n";
-
 		return false;
 	}
 
@@ -143,7 +141,6 @@ bool ActionHandle::handle_type(const std::string &type) {
 		m_type = FunctionType::NONE;
 
 		std::cerr << "[handle_type ERROR] > Unknow function set\n";
-
 		return false;
 	}
 
@@ -151,11 +148,8 @@ bool ActionHandle::handle_type(const std::string &type) {
 }
 
 bool ActionHandle::handle_name(const std::string &name) {
-	StringHandle sh;
-
-	if(sh.contains(name, invalid_symbols)) {
+	if(StringHandle::contains(name, invalid_symbols)) {
 		std::cerr << "[ERROR] Invaid function name set\n";
-
 		return false;
 	}
 
@@ -163,11 +157,9 @@ bool ActionHandle::handle_name(const std::string &name) {
 }
 
 std::string ActionHandle::remove_white_spaces(const std::string &content) {
-	StringHandle sh;
-
 	int idx = 0;
 
 	while(content[idx] == ' ') { idx++; }
 
-	return sh.extract_string_between_ii(content, idx, content.size());
+	return StringHandle::extract_string_between_ii(content, idx, content.size());
 }

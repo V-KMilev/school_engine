@@ -33,14 +33,12 @@ DefineHandle& DefineHandle::operator = (DefineHandle &&move) noexcept {
 }
 
 bool DefineHandle::handle_params(const std::string &params) {
-	StringHandle sh;
-
 	m_params = params;
 
-	m_params = sh.remove_symbol(m_params, ' ');
-	m_params = sh.remove_symbol(m_params, ',');
+	m_params = StringHandle::remove_symbol(m_params, ' ');
+	m_params = StringHandle::remove_symbol(m_params, ',');
 
-	if(sh.contains(m_params, invalid_symbols)) {
+	if(StringHandle::contains(m_params, invalid_symbols)) {
 		std::cerr << "[ERROR] Invaid parameter(s) set!\n";
 
 		return false;
@@ -53,9 +51,7 @@ bool DefineHandle::handle_body(
 	const std::string &body,
 	const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions
 ) {
-	StringHandle sh;
-
-	StringArray body_data = sh.split(body, ' ');
+	StringArray body_data = StringHandle::split(body, ' ');
 	StringArray clean_body_data(body_data.size());
 
 	if(!vaild_body(functions, body, body_data)) {
@@ -84,7 +80,7 @@ bool DefineHandle::handle_body(
 		}
 	}
 
-	StringArray post_data = sh.convert_to_postfix(clean_body_data);
+	StringArray post_data = StringHandle::convert_to_postfix(clean_body_data);
 
 	m_function.build(post_data, fixed_functions);
 
@@ -109,8 +105,6 @@ bool DefineHandle::single_param(
 	std::string& clean_data,
 	StringArray& clean_body_data
 ) const {
-	StringHandle sh;
-
 	if(current_data.size() == 1) {
 		const char& c = current_data[0];
 
@@ -118,9 +112,9 @@ bool DefineHandle::single_param(
 		return true;
 	}
 
-	clean_data = sh.remove_symbol(current_data, '!');
-	clean_data = sh.remove_symbol(clean_data,   '(');
-	clean_data = sh.remove_symbol(clean_data,   ')');
+	clean_data = StringHandle::remove_symbol(current_data, '!');
+	clean_data = StringHandle::remove_symbol(clean_data,   '(');
+	clean_data = StringHandle::remove_symbol(clean_data,   ')');
 
 	if(clean_data.size() == 1) {
 		int split_size = current_data.size();
@@ -144,24 +138,22 @@ bool DefineHandle::clean_func_param(
 	StringArray& clean_body_data,
 	HashMap<Pair<std::string, LogicalTree<std::string>>>& fixed_functions
 ) const {
-	StringHandle sh;
-
 	if(!(
-		sh.count(current_data, '!') > 0 ||
-		sh.count(current_data, '(') > 1 ||
-		sh.count(current_data, ')') > 1 
+		StringHandle::count(current_data, '!') > 0 ||
+		StringHandle::count(current_data, '(') > 1 ||
+		StringHandle::count(current_data, ')') > 1 
 	)) {
 		// Remove params without the first param
-		std::string func_name = sh.extract_string_between_ic(clean_data, 0, ',');
+		std::string func_name = StringHandle::extract_string_between_ic(clean_data, 0, ',');
 
 		// Remove first param
-		func_name = sh.extract_string_between_ii(func_name, 0, func_name.size() - 1);
+		func_name = StringHandle::extract_string_between_ii(func_name, 0, func_name.size() - 1);
 
 		std::string current_in_order = "";
 
 		// Get all params
-		current_in_order = sh.extract_string_between_ii(clean_data, func_name.size(), clean_data.size());
-		current_in_order = sh.remove_symbol(current_in_order, ',');
+		current_in_order = StringHandle::extract_string_between_ii(clean_data, func_name.size(), clean_data.size());
+		current_in_order = StringHandle::remove_symbol(current_in_order, ',');
 
 		const Pair<std::string, LogicalTree<std::string>>& pair = update_in_func(
 			functions,
@@ -185,8 +177,6 @@ bool DefineHandle::dirty_func_param(
 	StringArray& clean_body_data,
 	HashMap<Pair<std::string, LogicalTree<std::string>>>& fixed_functions
 ) const {
-	StringHandle sh;
-
 	int split_size = current_data.size();
 
 	for(int idx = 0; idx < split_size; idx++) {
@@ -198,26 +188,26 @@ bool DefineHandle::dirty_func_param(
 		}
 
 		// Remove front content
-		std::string func_name = sh.extract_string_between_ii(
+		std::string func_name = StringHandle::extract_string_between_ii(
 			current_data,
 			idx,
 			clean_data.size() + 2 + 1
 		);
 
 		// Remove extra brackets
-		func_name = sh.remove_symbol(func_name, '(');
-		func_name = sh.remove_symbol(func_name, ')');
+		func_name = StringHandle::remove_symbol(func_name, '(');
+		func_name = StringHandle::remove_symbol(func_name, ')');
 
 		if(func_name == clean_data) {
 			// Remove params
-			func_name = sh.extract_string_between_ic(func_name, 0, ',');
-			func_name = sh.extract_string_between_ii(func_name, 0, func_name.size() - 1);
+			func_name = StringHandle::extract_string_between_ic(func_name, 0, ',');
+			func_name = StringHandle::extract_string_between_ii(func_name, 0, func_name.size() - 1);
 
 			std::string current_params = "";
 
 			// Get all params
-			current_params = sh.extract_string_between_ii(clean_data, func_name.size(), clean_data.size());
-			current_params = sh.remove_symbol(current_params, ',');
+			current_params = StringHandle::extract_string_between_ii(clean_data, func_name.size(), clean_data.size());
+			current_params = StringHandle::remove_symbol(current_params, ',');
 
 			const Pair<std::string, LogicalTree<std::string>>& pair = update_in_func(
 				functions,
@@ -276,9 +266,8 @@ bool DefineHandle::vaild_body(
 	const std::string& body,
 	const StringArray& body_data
 ) const {
-	StringHandle sh;
 
-	if((sh.count(body, '(') + sh.count(body, ')')) % 2 == 1) {
+	if((StringHandle::count(body, '(') + StringHandle::count(body, ')')) % 2 == 1) {
 		std::cerr << "[vaild_body ERROR] > Bracket miss-count\n";
 		return false;
 	}
@@ -314,9 +303,9 @@ bool DefineHandle::vaild_body(
 			}
 		}
 
-		clean_data = sh.remove_symbol(data, '!');
-		clean_data = sh.remove_symbol(clean_data, '(');
-		clean_data = sh.remove_symbol(clean_data, ')');
+		clean_data = StringHandle::remove_symbol(data, '!');
+		clean_data = StringHandle::remove_symbol(clean_data, '(');
+		clean_data = StringHandle::remove_symbol(clean_data, ')');
 
 		if(clean_data.size() == 0) {
 			std::cerr << "[vaild_body ERROR] > Invaild parameter(s) used\n";
@@ -334,16 +323,16 @@ bool DefineHandle::vaild_body(
 		std::string func_params = "";
 
 		if(clean_data.size() > 1) {
-			func_name = sh.extract_string_between_ic(clean_data, 0, ',');
-			func_name = sh.extract_string_between_ii(func_name, 0, func_name.size() - 1);
+			func_name = StringHandle::extract_string_between_ic(clean_data, 0, ',');
+			func_name = StringHandle::extract_string_between_ii(func_name, 0, func_name.size() - 1);
 
 			if(!is_valid(functions, func_name)) {
 				std::cerr << "[vaild_body ERROR] > Undefined function(s) used\n";
 				return false;
 			}
 
-			func_params = sh.extract_string_between_ii(clean_data, func_name.size(), clean_data.size());
-			func_params = sh.remove_symbol(func_params, ',');
+			func_params = StringHandle::extract_string_between_ii(clean_data, func_name.size(), clean_data.size());
+			func_params = StringHandle::remove_symbol(func_params, ',');
 
 			if(m_params.size() != func_params.size()) {
 				std::cerr << "[update_in_func ERROR] > In function parameter(s) miss-count\n";
@@ -352,7 +341,7 @@ bool DefineHandle::vaild_body(
 
 			for(int idx = 0; idx < func_params.size(); idx++) {
 
-				if(!sh.contains(m_params, func_params[idx])) {
+				if(!StringHandle::contains(m_params, func_params[idx])) {
 					std::cerr << "[update_in_func ERROR] > Invalid in function parameter(s) used\n";
 					return false;
 				}
@@ -367,13 +356,11 @@ bool DefineHandle::is_valid(
 	const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
 	const std::string& param
 ) const { 
-	StringHandle sh;
-
 	if(param.size() == 1) {
-		if(sh.contains(param, "&|!()")) {
+		if(StringHandle::contains(param, "&|!()")) {
 			return true;
 		}
-		if(sh.contains(param, m_params)) {
+		if(StringHandle::contains(param, m_params)) {
 			return true;
 		}
 	}

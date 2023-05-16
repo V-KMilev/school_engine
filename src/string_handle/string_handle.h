@@ -2,42 +2,34 @@
 
 #include "string_array.h"
 
-class StringHandle {
-	public:
-		StringHandle() = default;
+namespace StringHandle {
+	extern std::string* split(const std::string &content, const char delimiter);
 
-		~StringHandle() = default;
+	extern std::string* split_limit(const std::string &content, const char delimiter, int to_index);
 
-		std::string* split(const std::string &content, const char delimiter);
+	extern std::string extract_string_between_cc(const std::string& content, const char start, const char end);
 
-		std::string* split_limit(const std::string &content, const char delimiter, int to_index);
+	extern std::string extract_string_between_ii(const std::string& content, int start, int end);
 
-		std::string extract_string_between_cc(const std::string& content, const char start, const char end) const;
+	extern std::string extract_string_between_ic(const std::string& content, int start, const char end);
 
-		std::string extract_string_between_ii(const std::string& content, int start, int end) const;
+	extern std::string remove_symbol(const std::string &content, const char symbol);
 
-		std::string extract_string_between_ic(const std::string& content, int start, const char end) const;
+	extern std::string remove_symbol(const std::string &content, const char symbol, int to_index);
 
-		std::string remove_symbol(const std::string &content, const char symbol) const;
+	extern std::string remove_all_between(const std::string &content, int start, int end);
 
-		std::string remove_symbol(const std::string &content, const char symbol, int to_index) const;
+	extern bool contains(const std::string &content, const char to_find);
 
-		std::string remove_all_between(const std::string &content, int start, int end) const;
+	extern bool contains(const std::string &content, const std::string &to_find);
 
-		bool contains(const std::string &content, const char to_find) const;
+	extern int count(const std::string &content, const char to_find);
 
-		bool contains(const std::string &content, const std::string &to_find) const;
+	extern int count(const std::string &content, const std::string &to_find);
 
-		int get_count(const std::string &content, const char to_find) const;
+	extern int precedence(const std::string& content);
 
-		int get_count(const std::string &content, const std::string &to_find) const;
+	extern StringArray convert_to_postfix(const StringArray& body);
 
-		int precedence(const std::string& content) const;
-
-		StringArray convert_to_postfix(const StringArray& body) const;
-
-		int to_int(const std::string& content) const;
-
-	private:
-		StringArray m_substrings;
+	extern int to_int(const std::string& content);
 };
