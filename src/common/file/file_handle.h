@@ -25,9 +25,13 @@ class FileHandle {
 
 		std::string path() const;
 
+		std::string default_path() const;
+
 	private:
 		// Default set to "last_save.txt"
 		std::string m_path;
+		// Default set to "last_save.txt"
+		std::string m_default_path;
 		// Default set to on (true)
 		AutoSaveMode m_auto_save;
 };

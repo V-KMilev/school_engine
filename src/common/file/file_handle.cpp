@@ -3,9 +3,15 @@
 #include <fstream>
 #include <iostream>
 
-FileHandle::FileHandle() : m_path("./../logs/last_save.txt"), m_auto_save(AutoSaveMode::ON) {}
+FileHandle::FileHandle() : m_default_path("./../logs/last_save.txt"), m_auto_save(AutoSaveMode::ON) {
+	m_path = m_default_path;
+}
 
-FileHandle::FileHandle(const std::string& path) : m_path(path), m_auto_save(AutoSaveMode::ON) {}
+FileHandle::FileHandle(const std::string& path) : m_path(path), m_auto_save(AutoSaveMode::ON) {
+	if(m_path == "") {
+		m_path = m_default_path;
+	}
+}
 
 void FileHandle::set_auto_save(AutoSaveMode mode) {
 	m_auto_save = mode;
@@ -123,9 +129,7 @@ void FileHandle::read(ActionHandle& ah, const std::string& path) const {
 		return;
 	};
 
-	StringHandle sh;
-
-	StringArray line_conent = sh.split(content, '\n');
+	StringArray line_conent = StringHandle::split(content, '\n');
 
 	for(long long idx = 0; idx < line_conent.count(); idx++) {
 		std::string& line = line_conent.data()[idx];
@@ -133,9 +137,9 @@ void FileHandle::read(ActionHandle& ah, const std::string& path) const {
 
 		std::string name = "";
 
-		if(sh.contains(line, '{')) {
-			name = sh.remove_symbol(line, '\t');
-			name = sh.remove_symbol(name, '{');
+		if(StringHandle::contains(line, '{')) {
+			name = StringHandle::remove_symbol(line, '\t');
+			name = StringHandle::remove_symbol(name, '{');
 
 			std::string func_name = "";
 
@@ -145,23 +149,23 @@ void FileHandle::read(ActionHandle& ah, const std::string& path) const {
 				while(depth > 0) {
 					line = line_conent.data()[++idx];
 
-					if(sh.contains(line, '{')) {
-						func_name = sh.remove_symbol(line, '\t');
-						func_name = sh.remove_symbol(func_name, '{');
+					if(StringHandle::contains(line, '{')) {
+						func_name = StringHandle::remove_symbol(line, '\t');
+						func_name = StringHandle::remove_symbol(func_name, '{');
 
 						depth++;
 						continue;
 					}
-					else if(sh.contains(line, '}')) {
+					else if(StringHandle::contains(line, '}')) {
 						depth--;
 						continue;
 					}
 					else if(line != "\n") {
-						std::string first    = sh.remove_symbol(line, '\t');
+						std::string first    = StringHandle::remove_symbol(line, '\t');
 						std::string s_second = line_conent.data()[++idx];
 
-						s_second = sh.remove_symbol(s_second, '\t');
-						s_second = sh.remove_symbol(s_second, ' ');
+						s_second = StringHandle::remove_symbol(s_second, '\t');
+						s_second = StringHandle::remove_symbol(s_second, ' ');
 
 						StringArray second;
 
@@ -188,24 +192,24 @@ void FileHandle::read(ActionHandle& ah, const std::string& path) const {
 				while(depth > 0) {
 					line = line_conent.data()[++idx];
 
-					if(sh.contains(line, '{')) {
-						func_name = sh.remove_symbol(line, '\t');
-						func_name = sh.remove_symbol(func_name, '{');
+					if(StringHandle::contains(line, '{')) {
+						func_name = StringHandle::remove_symbol(line, '\t');
+						func_name = StringHandle::remove_symbol(func_name, '{');
 
 						depth++;
 						continue;
 					}
-					else if(sh.contains(line, '}')) {
+					else if(StringHandle::contains(line, '}')) {
 						depth--;
 						continue;
 					}
 					else if(line != "\n") {
-						std::string first = sh.remove_symbol(line, '\t');;
+						std::string first = StringHandle::remove_symbol(line, '\t');;
 						std::string s_second = line_conent.data()[++idx];
 
 						bool second = false;
 
-						s_second = sh.remove_symbol(s_second, '\t');
+						s_second = StringHandle::remove_symbol(s_second, '\t');
 
 						if(s_second[0] == '1') {
 							second = true;
@@ -228,23 +232,23 @@ void FileHandle::read(ActionHandle& ah, const std::string& path) const {
 				while(depth > 0) {
 					line = line_conent.data()[++idx];
 
-					if(sh.contains(line, '{')) {
-						func_name = sh.remove_symbol(line, '\t');
-						func_name = sh.remove_symbol(func_name, '{');
+					if(StringHandle::contains(line, '{')) {
+						func_name = StringHandle::remove_symbol(line, '\t');
+						func_name = StringHandle::remove_symbol(func_name, '{');
 
 						depth++;
 						continue;
 					}
-					else if(sh.contains(line, '}')) {
+					else if(StringHandle::contains(line, '}')) {
 						depth--;
 						continue;
 					}
 					else if(line != "\n") {
-						std::string first = sh.remove_symbol(line, '\t');
+						std::string first = StringHandle::remove_symbol(line, '\t');
 
 						ah.all_solves().insert(
 							func_name,
-							sh.to_int(first)
+							StringHandle::to_int(first)
 						);
 					}
 				}
@@ -264,4 +268,8 @@ void FileHandle::leave_check(const ActionHandle& ah) const {
 
 std::string FileHandle::path() const {
 	return m_path;
+}
+
+std::string FileHandle::default_path() const {
+	return m_default_path;
 }
