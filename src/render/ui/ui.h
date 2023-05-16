@@ -111,7 +111,7 @@ void UIHandle::content() {
 		ImGuiWindowFlags_NoCollapse         | ImGuiWindowFlags_NoSavedSettings  |
 		ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_MenuBar;
 
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 }
 
 void UIHandle::setStyle() const {
