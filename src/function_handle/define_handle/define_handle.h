@@ -32,36 +32,39 @@ class DefineHandle {
 
 	private:
 		bool single_param(
-			const StringHandle& sh,
 			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
 			const std::string& current_data,
 			std::string& clean_data,
 			StringArray& clean_body_data
-		);
+		) const;
 
 		bool clean_func_param(
-			const StringHandle& sh,
 			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
 			const std::string& current_data,
 			const std::string& clean_data,
 			StringArray& clean_body_data,
 			HashMap<Pair<std::string, LogicalTree<std::string>>>& fixed_functions
-		);
+		) const;
 
 		bool dirty_func_param(
-			const StringHandle& sh,
 			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
 			const std::string& current_data,
 			const std::string& clean_data,
 			StringArray& clean_body_data,
 			HashMap<Pair<std::string, LogicalTree<std::string>>>& fixed_functions
-		);
+		) const;
 
 		Pair<std::string, LogicalTree<std::string>> update_in_func(
 			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
 			const std::string& func_name,
 			const std::string& current_params
-		);
+		) const;
+
+		bool vaild_body(
+			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
+			const std::string& body,
+			const StringArray& body_data
+		) const;
 		
 		bool is_valid(
 			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,
