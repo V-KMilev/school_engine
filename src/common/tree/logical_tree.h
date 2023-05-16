@@ -15,12 +15,14 @@
 template<typename T>
 struct TreeNode {
 	public:
-		TreeNode(T value) :value(value), left(nullptr), right(nullptr) {}
-		TreeNode(T value, TreeNode<T>* left, TreeNode<T>* right) :value(value), left(left), right(right) {}
+		TreeNode(T value);
+		TreeNode(T value, TreeNode<T>* left, TreeNode<T>* right);
 
-		bool operator == (const TreeNode& other) const {
-			return value == other.value && left == other.left && right == other.right;
-		}
+		TreeNode(TreeNode<T>* copy);
+
+		TreeNode<T>& operator == (const TreeNode& copy);
+
+		bool operator == (const TreeNode& other) const;
 
 		void fix_data(const TreeNode<T>* origin, const char& c1, const char& c2);
 
@@ -34,6 +36,33 @@ struct TreeNode {
 		TreeNode<T>* left;
 		TreeNode<T>* right;
 };
+
+template<typename T>
+TreeNode<T>::TreeNode(T value) :value(value), left(nullptr), right(nullptr) {}
+
+template<typename T>
+TreeNode<T>::TreeNode(T value, TreeNode<T>* left, TreeNode<T>* right) :value(value), left(left), right(right) {}
+
+template<typename T>
+TreeNode<T>::TreeNode(TreeNode<T>* copy) {
+	value = copy->value;
+
+	left = new TreeNode<T>(copy->left->value);
+	right = new TreeNode<T>(copy->right->value);
+}
+
+template<typename T>
+TreeNode<T>& TreeNode<T>::operator == (const TreeNode& copy) {
+	value = copy->value;
+
+	left = new TreeNode<T>(copy->left->value);
+	right = new TreeNode<T>(copy->right->value);
+}
+
+template<typename T>
+bool TreeNode<T>::operator == (const TreeNode& other) const {
+	return value == other.value && left == other.left && right == other.right;
+}
 
 template<typename T>
 void TreeNode<T>::fix_data(const TreeNode<T>* origin, const char& old_c, const char& new_c) {
@@ -83,11 +112,15 @@ class LogicalTree {
 	public:
 		LogicalTree();
 
+		LogicalTree(const LogicalTree& copy);
+
 		LogicalTree(TreeNode<T>* root);
 
-		bool operator == (const LogicalTree& other) const {
-			return m_root == other.m_root;
-		}
+		LogicalTree<T>& operator = (const LogicalTree& copy);
+
+		LogicalTree<T>& operator = (TreeNode<T>* root);
+
+		bool operator == (const LogicalTree& other) const;
 
 		operator std::string () const {
 			return get_in_string(m_root);
@@ -129,7 +162,34 @@ template<typename T>
 LogicalTree<T>::LogicalTree() : m_root(nullptr) {}
 
 template<typename T>
-LogicalTree<T>::LogicalTree(TreeNode<T>* root) : m_root(root) {}
+LogicalTree<T>::LogicalTree(const LogicalTree& copy) {
+	m_root = copy.m_root;
+}
+
+template<typename T>
+LogicalTree<T>::LogicalTree(TreeNode<T>* root) {
+	m_root = new TreeNode<T>(root);
+}
+
+template<typename T>
+LogicalTree<T>& LogicalTree<T>::operator = (const LogicalTree& copy) {
+	m_root = copy.m_root;
+
+	return *this;
+}
+
+template<typename T>
+LogicalTree<T>& LogicalTree<T>::operator = (TreeNode<T>* root) {
+	m_root = new TreeNode<T>(root);
+
+	return *this;
+}
+
+template<typename T>
+bool LogicalTree<T>::operator == (const LogicalTree& other) const {
+	return m_root == other.m_root;
+}
+
 
 template<typename T>
 TreeNode<T>* LogicalTree<T>::get_root() const {
