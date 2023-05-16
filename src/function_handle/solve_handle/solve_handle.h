@@ -14,15 +14,15 @@ class SolveHandle {
 
 		bool handle_params(const std::string &params);
 
-		const std::string& get_name() const;
+		const std::string& name() const;
 
-		const std::string& get_params() const;
+		const std::string& params() const;
 
-		bool get_solve() const;
+		bool solve() const;
 
-		void set_name(const std::string& name);
+		void name(const std::string& name);
 
-		void set_params(const std::string& params);
+		void params(const std::string& params);
 
 		void solve(
 			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,

@@ -12,7 +12,7 @@ class AllHandle {
 
 		AllHandle(const std::string& name);
 
-		void set_name(const std::string& name);
+		void name(const std::string& name);
 
 		uint32_t solve(
 			const HashMap<Pair<std::string, LogicalTree<std::string>>>& functions,

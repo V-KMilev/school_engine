@@ -35,7 +35,7 @@ bool ActionHandle::handle_input(const std::string &content) {
 	}
 
 	if(m_type == FunctionType::ALL) {
-		m_all_handle.set_name(name);
+		m_all_handle.name(name);
 
 		uint32_t solves = m_all_handle.solve(m_functions, m_solves);
 
@@ -55,8 +55,8 @@ bool ActionHandle::handle_input(const std::string &content) {
 		m_solves.insert(
 			name,
 			Pair<std::string, bool>(
-				newFunc.get_params(),
-				newFunc.get_solve()
+				newFunc.params(),
+				newFunc.solve()
 			)
 		);
 

@@ -19,30 +19,34 @@ bool SolveHandle::handle_params(const std::string &params) {
 
 	if(sh.contains(m_params, invalid_symbols)) {
 		std::cerr << "[ERROR] Invaid parameter(s) set\n";
+		return false;
+	}
 
+	if(sh.contains(m_params, "23456789")) {
+		std::cerr << "[ERROR] Invaid parameter(s) set\n";
 		return false;
 	}
 
 	return true;
 }
 
-const std::string& SolveHandle::get_name() const {
+const std::string& SolveHandle::name() const {
 	return m_name;
 }
 
-const std::string& SolveHandle::get_params() const {
+const std::string& SolveHandle::params() const {
 	return m_params;
 }
 
-bool SolveHandle::get_solve() const {
+bool SolveHandle::solve() const {
 	return m_solve;
 }
 
-void SolveHandle::set_name(const std::string& name) {
+void SolveHandle::name(const std::string& name) {
 	m_name = name;
 }
 
-void SolveHandle::set_params(const std::string& params) {
+void SolveHandle::params(const std::string& params) {
 	m_params = params;
 }
 

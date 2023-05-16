@@ -6,7 +6,7 @@ AllHandle::AllHandle() : m_solves(0), m_name("") {}
 
 AllHandle::AllHandle(const std::string& name) : m_solves(0), m_name(name) {}
 
-void AllHandle::set_name(const std::string& name) {
+void AllHandle::name(const std::string& name) {
 	m_name = name;
 }
 
@@ -61,14 +61,14 @@ void AllHandle::find_all(
 			continue;
 		}
 
-		solver.set_params(params);
+		solver.params(params);
 
 		solver.solve(functions, solves);
 
-		if(solver.get_solve() == 1) {
+		if(solver.solve() == 1) {
 			m_solves |= (1 << idx);
 		}
 
-		solves.insert(m_name + "-" + params, Pair<std::string, bool>(params, solver.get_solve()));
+		solves.insert(m_name + "-" + params, Pair<std::string, bool>(params, solver.solve()));
 	}
 }
