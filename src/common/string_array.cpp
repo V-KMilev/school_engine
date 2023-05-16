@@ -1,21 +1,21 @@
 #include "string_array.h"
 
-StringArray::StringArray(std::string* string_ptr) : m_size(11), m_count(0) {
-	while (string_ptr[m_count] != "" || string_ptr[m_count] == "\n") {
-		std::string a = string_ptr[m_count];
+StringArray::StringArray(std::string* array) : m_size(11), m_count(0) {
+	while(array[m_count] != "") {
 		m_count++;
 	}
 
-	std::string a = string_ptr[m_count];
+	// Resize the array if it's more than 70% full
+	while(m_count + 1 > m_size * 0.7) {
+		m_size *= 2;
+	}
 
-	m_size = m_count * 2;
-
-	// Allocate mem for the new copy
+	// Allocate memory for the new copy
 	m_data = new std::string[m_size];
 
 	// Copy the strings
-	for(int idx = 0; idx < m_count; idx++) {
-		m_data[idx] = string_ptr[idx];
+	for (int idx = 0; idx < m_count; idx++) {
+		m_data[idx] = array[idx];
 	}
 }
 
@@ -25,6 +25,19 @@ StringArray::StringArray(int size) : m_size(size), m_count(0) {
 
 StringArray::StringArray() : m_size(11), m_count(0) {
 	m_data = new std::string[m_size];
+}
+
+StringArray::StringArray(const StringArray& copy) {
+	m_size = copy.m_size;
+	m_count = copy.m_count;
+
+	// Allocate mem for the new copy
+	m_data = new std::string[m_size];
+
+	for(int idx = 0; idx < m_count; idx++) {
+		m_data[idx] = copy.m_data[idx];
+
+	}
 }
 
 StringArray::~StringArray() {
@@ -40,37 +53,77 @@ std::string& StringArray::operator[](int index) {
 	return m_data[index];
 }
 
-StringArray& StringArray::operator = (std::string* string_ptr) {
+StringArray& StringArray::operator = (std::string* array) {
+	if(m_data == array) {
+		return *this;
+	}
+
 	// Deallocate any previous strings
-	if (m_data != nullptr) {
-
+	if(m_data != nullptr) {
 		delete[] m_data;
-
 		m_data = nullptr;
 	}
 
-	// Determine the new count
+	m_size = 11;
 	m_count = 0;
 
-	while (string_ptr[m_count] != "") {
+	while(array[m_count] != "") {
 		m_count++;
 	}
 
-	m_size = m_count * 2;
+	// Resize the array if it's more than 70% full
+	while(m_count + 1 > m_size * 0.7) {
+		m_size *= 2;
+	}
 
+	// Allocate memory for the new copy
 	m_data = new std::string[m_size];
 
-	for(int idx = 0; idx < m_count; idx++) {
-		m_data[idx] = string_ptr[idx];
+	// Copy the strings
+	for (int idx = 0; idx < m_count; idx++) {
+		m_data[idx] = array[idx];
+	}
+
+	return *this;
+}
+
+StringArray& StringArray::operator=(const StringArray& copy) {
+	if(this == &copy) {
+		return *this;
+	}
+
+	// Deallocate any previous strings
+	if(m_data != nullptr) {
+		delete[] m_data;
+		m_data = nullptr;
+	}
+
+	m_size = copy.m_size;
+	m_count = copy.m_count;
+
+	// Allocate memory for the new copy
+	m_data = new std::string[m_size];
+
+	// Copy the strings
+	for (int idx = 0; idx < m_count; idx++) {
+		m_data[idx] = copy.m_data[idx];
 	}
 
 	return *this;
 }
 
 void StringArray::reset_data() {
-	for(int idx = 0; idx < m_size; idx++) {
-		m_data[idx] = "";
+	// Deallocate any previous strings
+	if(m_data != nullptr) {
+		delete[] m_data;
+		m_data = nullptr;
 	}
+
+	m_size = 11;
+	m_count = 0;
+
+	// Allocate memory for the new copy
+	m_data = new std::string[m_size];
 }
 
 void StringArray::push_back(const std::string& str) {
@@ -83,7 +136,7 @@ void StringArray::push_back(const std::string& str) {
 
 void StringArray::push_back(const char& c) {
 	// Resize the array if it's more than 70% full
-	if (m_count + 1 > m_size * 0.7) {
+	while(m_count + 1 > m_size * 0.7) {
 		resize(m_size * 2);
 	}
 	m_data[m_count++] = c;

@@ -4,15 +4,19 @@
 
 class StringArray {
 	public:
-		StringArray(std::string* string_ptr);
+		StringArray(std::string* array);
 		StringArray(int size);
 		StringArray();
+
+		StringArray(const StringArray& copy);
 
 		~StringArray();
 
 		std::string& operator[](int index);
 
-		StringArray& operator = (std::string* string_ptr);
+		StringArray& operator = (std::string* array);
+
+		StringArray& operator = (const StringArray& copy);
 
 		void reset_data();
 
